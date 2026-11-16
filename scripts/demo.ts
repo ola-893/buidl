@@ -30,7 +30,7 @@ async function compile() {
   };
 }
 
-async function init() {
+async function init(register = true) {
   if (await client.getChainId() !== 31337) throw new Error('Run Anvil on loopback with chain ID 31337.');
   const [holder, ...reviewers] = await accounts();
   if (reviewers.length < 3) throw new Error('The demo requires one local publishing account and three reviewer accounts.');
@@ -44,8 +44,10 @@ async function init() {
   const fixture = await deploy('LocalDeweb');
   const registry = await deploy('ReleaseRegistry', [fixture, toHex(randomBytes(32))]);
   const config = parseLocalConfig({ registry, site: { chainId: 31337, processor: fixture, circuitId: '1', container: fixture } });
-  await waitFor(await wallet.writeContract({ address: registry, abi: registryAbi, functionName: 'setPolicy',
-    args: [siteTuple(config.site), reviewers.slice(0, 3).map(a => a.toLowerCase() as Address).sort(), 2n] }));
+  if (register) {
+    await waitFor(await wallet.writeContract({ address: registry, abi: registryAbi, functionName: 'setPolicy',
+      args: [siteTuple(config.site), reviewers.slice(0, 3).map(a => a.toLowerCase() as Address).sort(), 2n] }));
+  }
   await mkdir('public/local-demo', { recursive: true });
   await writeFile(configPath, JSON.stringify(config, null, 2));
   await writeFile('public/local-demo/site.json', JSON.stringify(config.site, null, 2));
@@ -53,7 +55,7 @@ async function init() {
     const { manifest } = await readBuild(releaseDir(name), { site: config.site, release: `checkout-${name}`, fallback: 'index.html' });
     await writeFile(releaseFile(name), canonical(manifest) + '\n');
   }
-  console.log('Local fixture and 2-of-3 policy initialized.', config.registry);
+  console.log(register ? 'Local fixture and 2-of-3 policy initialized.' : 'Local fixture initialized. Register it in the dashboard.', config.registry);
   return config;
 }
 
@@ -98,7 +100,10 @@ async function verify(config: LocalConfig, name: string) {
 
 async function main() {
   const [action = 'run', name] = process.argv.slice(2);
-  if (action === 'init') return void await init();
+  if (action === 'init') {
+    if (name && name !== '--unregistered') throw new Error('Use init [--unregistered].');
+    return void await init(name !== '--unregistered');
+  }
   const config = action === 'run' ? await init() : parseLocalConfig(await load(configPath));
   if (action === 'approve' && (name === 'a' || name === 'b')) return void await approve(config, name);
   if (action === 'bypass-b') return await bypass(config);

@@ -96,8 +96,10 @@ export function parseManifest(value: unknown): Manifest {
 
 export const canonical = (manifest: Manifest) => JSON.stringify(parseManifest(manifest));
 export const manifestDigest = (manifest: Manifest) => sha256(toHex(canonical(manifest)));
-export function artifactDigest(manifest: Manifest): Hex {
-  const { schemaVersion, site, routing, files } = parseManifest(manifest);
+export function artifactDigest(artifacts: Artifacts): Hex {
+  const { schemaVersion, site, routing, files } = parseManifest({
+    schemaVersion: SCHEMA, release: 'artifacts', site: artifacts.site, routing: artifacts.routing, files: artifacts.files,
+  });
   return sha256(toHex(JSON.stringify({ schemaVersion, site, routing, files })));
 }
 

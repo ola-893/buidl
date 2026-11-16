@@ -22,6 +22,10 @@ Reviewed 16 November 2026. The hackathon accepts projects that read TapeOut on X
 
 TapeKit kernel package metadata declares version 0.1.0 and MIT. npm registry lookup returned 404. The unmodified source is vendored at commit `37c617e7e332787c8a32a81e4d7d05a28a06c156`. TAPs were reviewed at `527477ecb7cf68ee9e86d8292669d57fe1680572`, where TAP-10 is draft v1.1, TAP-21 describes separate proof-verified reads, and proposal text is CC0. [TapeKit kernel](https://github.com/TapeOutProtocol/TapeKit/tree/37c617e7e332787c8a32a81e4d7d05a28a06c156/kernel), [TAPs and licensing](https://github.com/TapeOutProtocol/TAPs/tree/527477ecb7cf68ee9e86d8292669d57fe1680572)
 
+## Distribution
+
+The public web build uses GitHub Pages. Verification links use a query parameter, so opening a link directly on static hosting triggers a new onchain read. Local approval links bind to the Anvil registry instance and release digest. A configured mainnet registry remains necessary for public X Layer approval claims. Hosting the frontend on TapeOut requires a controlled circuit and authorized SiteRegistry writes, plus an origin and shell that permit the necessary RPC and wallet operations.
+
 ## Registry decision
 
 SiteRegistry writes are controlled by the publishing role, and SiteRegistry files can be overwritten by that role. TapeSend can carry messages and TAP-12 defines a draft commitment and verdict format. Those interfaces leave policy versions, threshold authorization, rollback, revocation, and current-release selection to applications. The local buidl registry implements those rules explicitly. [TAP-12](https://github.com/TapeOutProtocol/TAPs/blob/527477ecb7cf68ee9e86d8292669d57fe1680572/TAPs/TAP-12.md)

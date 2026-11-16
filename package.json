@@ -1,6 +1,6 @@
 {
   "name": "buidl",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -13,29 +13,41 @@
     "buidl": "tsx src/cli.ts",
     "demo": "tsx scripts/demo.ts",
     "test": "tsx --test tests/*.test.ts",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "prepare": "npm run build:cli",
+    "build:cli": "node scripts/build-cli.mjs"
   },
-  "dependencies": {
+  "devDependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",
     "@fontsource-variable/inter": "^5.3.0",
+    "@playwright/test": "1.65.1",
     "@tapekit/kernel": "file:vendor/tapekit",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "esbuild": "0.28.2",
     "lucide-react": "^0.577.0",
     "mime": "4.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "viem": "2.57.20"
-  },
-  "devDependencies": {
-    "@playwright/test": "1.65.1",
-    "@types/node": "^22.0.0",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
     "solc": "0.8.38",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
+    "viem": "2.57.20",
     "vite": "8.3.8"
   },
   "overrides": {
     "tmp": "0.2.7"
-  }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ola-893/buidl.git"
+  },
+  "bin": {
+    "buidl": "build-cli/buidl.mjs"
+  },
+  "files": [
+    "build-cli/"
+  ]
 }

@@ -200,3 +200,15 @@ footer span:first-child { display: flex; align-items: center; gap: 5px; font-wei
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+.verification-shell { min-height: 100vh; }
+.verification-topbar { padding-inline: max(24px, calc((100vw - 1080px) / 2)); }
+.verification-content { max-width: 1176px; }
+.verification-summary { align-items: center; }
+.verification-summary h2 { font-size: 22px; }
+.verification-data { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 12px; width: 100%; }
+@media (max-width: 480px) {
+  .verification-topbar { padding-inline: 13px; }
+  .verification-summary .inspect-icon { display: grid; width: 34px; height: 34px; }
+  .verification-summary h2 { font-size: 18px; }
+}

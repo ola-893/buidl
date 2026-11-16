@@ -88,10 +88,28 @@ export const outcomes = {
   unavailable: 'Verification unavailable.',
 } as const;
 
-export function approvalStatus(manifest: Manifest | undefined, state: LocalState) {
+function commitmentStatus(state: LocalState) {
   const { policy, commitment, authorityCurrent, block } = state;
-  if (!authorityCurrent || !policy.version || commitment.approval.policyVersion !== policy.version) return 'none';
+  if (!authorityCurrent || !policy.version || commitment.approval.policyVersion !== policy.version ||
+      commitment.approval.schemaVersion !== 1n || commitment.signers.length < policy.threshold) return 'none';
   if (commitment.revoked || commitment.approval.expiry <= block.timestamp) return 'revoked';
+  return 'active';
+}
+
+export function compareCommitment(inspection: Inspection, state: LocalState, release?: Hex): keyof typeof outcomes {
+  if (inspection.block?.hash !== state.block.hash || !inspection.site ||
+      (state.commitment.approval.sequence > 0n && state.commitment.approval.siteKey !== siteKey(inspection.site))) return 'unavailable';
+  if (release && state.commitment.approval.manifestDigest !== release) return 'none';
+  const status = commitmentStatus(state);
+  if (status !== 'active') return status;
+  if (inspection.status !== 'complete' || !inspection.artifacts) return 'unavailable';
+  return artifactDigest(inspection.artifacts) === state.commitment.approval.artifactDigest ? 'match' : 'differs';
+}
+
+export function approvalStatus(manifest: Manifest | undefined, state: LocalState) {
+  const { commitment } = state;
+  const status = commitmentStatus(state);
+  if (status !== 'active') return status;
   if (!manifest) return 'unavailable';
   if (commitment.approval.siteKey !== siteKey(manifest.site) ||
       commitment.approval.manifestDigest !== manifestDigest(manifest) ||

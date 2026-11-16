@@ -28,6 +28,16 @@ test('inspect a real X Layer deployment through the browser', async ({ page }) =
   await expect(page.getByRole('heading', { name: EXAMPLE_SITE })).toBeVisible({ timeout: 55_000 });
   await expect(page.getByText('1 of 1 files verified')).toBeVisible();
   await expect(page.getByText('Activated on DeWEB')).toBeVisible();
+  const url = await page.getByRole('link', { name: 'Verification link' }).getAttribute('href');
+  expect(url).toContain('?verify=' + EXAMPLE_SITE);
+  const publicPage = await page.context().newPage();
+  await publicPage.goto(url!);
+  await expect(publicPage.getByRole('heading', { name: EXAMPLE_SITE })).toBeVisible({ timeout: 55_000 });
+  await expect(publicPage.getByRole('heading', { name: 'Verification unavailable.' })).toBeVisible();
+  await expect(publicPage.getByText('1 of 1 files verified')).toBeVisible();
+  await expect(publicPage.locator('time')).toHaveAttribute('datetime', /^\d{4}-/);
+  await expect(publicPage.getByText('Checked block')).toBeVisible();
+  await publicPage.close();
   await page.getByRole('button', { name: 'index.html', exact: true }).click();
   await expect(page.getByRole('dialog', { name: 'File integrity' })).toContainText('Computed SHA-256');
   await page.getByRole('button', { name: 'Close dialog' }).click();
@@ -37,7 +47,7 @@ test('inspect a real X Layer deployment through the browser', async ({ page }) =
 });
 
 test('approve A, publish the exact bytes, detect B, approve B and invalidate stale commitments', async ({ page }) => {
-  cli('demo', '--', 'init');
+  cli('demo', '--', 'init', '--unregistered');
   const config = parseLocalConfig(json(configPath));
   const client = localClient();
   const [holder, reviewer1, reviewer2, , stranger] = await localWallet(config.site.container).getAddresses();
@@ -74,6 +84,12 @@ test('approve A, publish the exact bytes, detect B, approve B and invalidate sta
   await page.goto('/');
   await page.getByRole('button', { name: 'Local demo', exact: true }).click();
   await expect(page.getByText('Controlled local site')).toBeVisible();
+  await chooseWallet(page, holder);
+  await page.getByRole('button', { name: 'Approvals', exact: true }).click();
+  const addresses = await localWallet(holder).getAddresses();
+  await page.getByRole('textbox', { name: 'Reviewer addresses' }).fill(addresses.slice(1, 4).join('\n'));
+  await page.getByRole('button', { name: 'Register app', exact: true }).click();
+  await expect(page.getByText('Version 1')).toBeVisible();
   await page.getByRole('button', { name: 'Releases', exact: true }).click();
   await page.locator('input[type=file][accept]').setInputFiles(aPath);
   await expect(page.getByText('Release manifest loaded.')).toBeVisible();
@@ -109,7 +125,18 @@ test('approve A, publish the exact bytes, detect B, approve B and invalidate sta
     await expect(page.getByRole('heading', { name: expected, exact: true })).toBeVisible();
   }
   await inspect('Matches approved release.');
+  const link = await page.getByRole('link', { name: 'Verification link' }).getAttribute('href');
+  expect(link).toContain('verify=local');
+  const publicPage = await page.context().newPage();
+  await publicPage.goto(link!);
+  await expect(publicPage.getByRole('heading', { name: 'Matches approved release.' })).toBeVisible();
+  await expect(publicPage.getByText('2 of 3', { exact: true })).toBeVisible();
+  await expect(publicPage.getByText('Reviewer', { exact: true })).toHaveCount(2);
+  await expect(publicPage.getByText('Checked block')).toBeVisible();
+  await expect(publicPage.locator('time').first()).toHaveAttribute('datetime', /^\d{4}-/);
   cli('demo', '--', 'bypass-b');
+  await publicPage.getByRole('button', { name: 'Recheck now' }).click();
+  await expect(publicPage.getByRole('heading', { name: 'Deployment differs from approved release.' })).toBeVisible();
   await inspect('Deployment differs from approved release.');
   await expect(page.getByText('2 of 2 files verified')).toBeVisible();
   await page.locator('.diff summary').click();
@@ -124,6 +151,10 @@ test('approve A, publish the exact bytes, detect B, approve B and invalidate sta
   }
 
   cli('demo', '--', 'approve', 'b');
+  await publicPage.getByRole('button', { name: 'Recheck now' }).click();
+  await expect(publicPage.getByRole('heading', { name: 'No qualifying approval.' })).toBeVisible();
+  await expect(publicPage.getByText('This release is no longer the registry’s current commitment.')).toBeVisible();
+  await publicPage.close();
   await page.getByRole('button', { name: 'Releases', exact: true }).click();
   await page.getByRole('button', { name: 'Load demo B', exact: true }).click();
   await inspect('Matches approved release.');

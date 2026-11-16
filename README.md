@@ -4,7 +4,22 @@ Does this deployed DeWEB app match the exact release approved by the team?
 
 buidl verifies X Layer DeWEB bytes against TapeOut and compares complete deployments with independently approved manifests. The registry and gated publishing workflow run on Anvil. The X Layer mainnet inspector uses live public RPC reads. Approval establishes an artifact match. Security reviews and source-to-build reproducibility are separate claims.
 
-## Run
+## Use buidl
+
+- [Web dashboard](https://ola-893.github.io/buidl/) for inspecting a deployment and preparing a manifest.
+- [Public verification](https://ola-893.github.io/buidl/?verify=1.2.230.tape) for a fresh content check without a wallet. From a resolved dashboard inspection, open **Verification link** to share a different site.
+- [Installable CLI](https://github.com/ola-893/buidl/releases) for terminal and CI workflows. Node.js 22.13+ is required.
+
+```sh
+npm install -g git+https://github.com/ola-893/buidl.git
+buidl inspect 1.2.230.tape
+```
+
+You can also download the versioned `.tgz` from the GitHub release and run `npm install -g ./buidl-0.2.0.tgz`. To build the package yourself, run `npm ci` and `npm pack` from the checkout. The CLI is distributed through this repository and its GitHub releases.
+
+Public links perform fresh reads when opened, recheck while open, and display the checked block and UTC check time. A live X Layer link reports content integrity and the absence of a configured approval registry. A loopback demo link checks the actual Anvil registry and shows its reviewer evidence and match status. It is scoped to that particular local registry instance and, when available, its current release digest.
+
+## Run locally
 
 Use Node.js 22.13+ and npm. The controlled release workflow also requires [Foundry Anvil](https://getfoundry.sh/anvil/).
 
@@ -35,7 +50,7 @@ npm run buidl -- publish-local demo/release-a public/local-demo/manifest-a.json 
 npm run buidl -- verify-local public/local-demo/manifest-a.json public/local-demo/config.json
 ```
 
-The first Anvil account publishes. Two of the next three accounts independently sign typed approval. For browser signing, open **Local demo** from the dev server and select **Releases**, then **Load demo A**. Use **Approvals** to create a request, connect the local reviewer accounts in turn, and sign. Export/import carries the request between reviewers. Once the threshold is met, any connected wallet on the local chain can record the approval. The scripted `approve a` command is an alternative to the browser signing steps. Use a disposable extension wallet profile and the test-only accounts printed by Anvil.
+The first Anvil account publishes. Two of the next three accounts independently sign typed approval. For browser signing, open **Local demo** from the dev server and select **Releases**, then **Load demo A**. Use **Approvals** to create a request, connect the local reviewer accounts in turn, and sign. Export/import carries the request between reviewers. Once the threshold is met, any connected wallet on the local chain can record the approval. To start with an unregistered local site, use `npm run demo -- init --unregistered`, then connect the holder wallet and select **Approvals → Register app**. The scripted `approve a` command is an alternative to the browser signing steps once a policy exists. Use a disposable extension wallet profile and the test-only accounts printed by Anvil.
 
 Run `npm run demo` for the entire scripted A → bypassed B → approved B demonstration. The [2:40 demo script](docs/demo.md) gives the browser and terminal sequence.
 
@@ -69,7 +84,7 @@ The browser suite expects the disposable Anvil service running. It deploys its o
 
 The supported publisher gates staged bytes before upload and verifies the staged deployment before ending the upload. Direct holder writes can bypass the publisher. A fresh post-deployment read detects divergence. Viewer-side blocking requires a viewer that integrates and enforces the result. For loopback recovery, rerun the gated publisher after the interrupted process exits. After a hard kill, remove the matching empty `.demo/publish-<container>.lock` directory once the old publisher is gone.
 
-Mainnet inspection is read-only. Operating a live approval registry requires a TapeOut authority source that can detect transfer epochs and a configured registry deployment. The [integration map](docs/integrations.md) records the verified contracts, provider constraints, and hosting options.
+The hosted frontend uses GitHub Pages as its independent HTTPS origin. Mainnet inspection is read-only. Operating a live approval registry requires a TapeOut authority source that can detect transfer epochs and a configured registry deployment. The [integration map](docs/integrations.md) records the verified contracts, provider constraints, and hosting options.
 
 ## Commercial use and roadmap
 

@@ -1,20 +1,21 @@
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  Activity, ArrowDownToLine, ArrowRight, ArrowUpRight, Blocks, Check, ChevronDown, CircleAlert, CircleHelp, Clipboard,
-  CodeXml, FileCode2, FileJson, FolderOpen, GitCompareArrows, Globe2, History, Layers3, Link2, LoaderCircle,
+  Activity, ArrowDownToLine, ArrowRight, ArrowUpRight, Blocks, Check, ChevronDown, CircleAlert, CircleHelp,
+  CodeXml, FolderOpen, GitCompareArrows, Globe2, History, Layers3, Link2, LoaderCircle,
   Menu, RefreshCw, Search, ShieldCheck, Upload, Wallet, X,
 } from 'lucide-react';
 import { type Address, type Hex } from 'viem';
 import { foundry } from 'viem/chains';
 import { approvalTypedData, parseEvidence, registryAbi, signaturesFor, siteTuple, type Evidence } from '../core/approval';
 import { assertCurrentEvidence, compareLocal, inspectLocal, localClient, localHistory, localState, newRequest, outcomes, parseLocalConfig, type LocalConfig, type LocalState } from '../core/local';
-import { address, compare, fileEntry, manifestDigest, MAX_FILE_BYTES, MAX_FILES, MAX_SITE_BYTES, parseManifest, sameSite, type Change, type Manifest } from '../core/manifest';
-import { EXAMPLE_SITE, inspectLive, unavailable, XLAYER_EXPLORER, type FileResult, type Inspection } from '../core/tapeout';
+import { address, compare, fileEntry, manifestDigest, MAX_FILE_BYTES, MAX_FILES, MAX_SITE_BYTES, parseManifest, sameSite, type Manifest } from '../core/manifest';
+import { EXAMPLE_SITE, inspectLive, unavailable, XLAYER_EXPLORER, type Inspection } from '../core/tapeout';
 import { walletClient, watchWallets, type Provider } from './wallet';
 import { contentTypeFor } from '../core/content-type';
-import paymentA from '../../demo/release-a/payment.json?raw';
-import paymentB from '../../demo/release-b/payment.json?raw';
+import { Badge, CopyValue, Diff, Inventory, Modal } from './evidence-components';
+import { download, errorText, fetchJson, localDemoAvailable, numeric, short } from './web-utils';
+import { PublicVerification, verificationLink } from './public-verification';
 import '@fontsource-variable/inter/wght.css';
 import '@fontsource-variable/dm-sans/wght.css';
 import './style.css';
@@ -25,104 +26,6 @@ const sections = [
 ] as const;
 type Section = typeof sections[number]['label'];
 type HistoryLog = Awaited<ReturnType<typeof localHistory>>[number];
-const short = (value: string, width = 8) => value.length > 2 * width + 2 ? value.slice(0, width) + '…' + value.slice(-width + 2) : value;
-const formatBytes = (bytes: number) => bytes >= 1048576 ? `${(bytes / 1048576).toFixed(1)} MB` : bytes >= 1024 ? `${(bytes / 1024).toFixed(1)} KB` : `${bytes} B`;
-const numeric = new Intl.NumberFormat('en');
-const localDemoAvailable = import.meta.env.DEV && ['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname);
-const statusName: Record<FileResult['status'], string> = { verified: 'Verified', incomplete: 'Incomplete', 'no-hash': 'No declared hash', missing: 'Missing', 'too-large': 'Too large', unavailable: 'Unavailable' };
-const errorText = (error: unknown) => (error as { shortMessage?: string; message?: string })?.shortMessage || (error as Error)?.message || 'Operation failed.';
-
-function download(name: string, value: unknown) {
-  const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2) + '\n'], { type: 'application/json' }));
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = name;
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1_000);
-}
-
-async function fetchJson(path: string): Promise<unknown> {
-  const response = await fetch(path, { cache: 'no-store' });
-  if (!response.ok) throw new Error('Local demo files are unavailable. Run npm run demo -- init.');
-  return response.json();
-}
-
-function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: 'neutral' | 'green' | 'amber' | 'purple' }) {
-  return <span className={`badge ${tone}`}><span className="dot" />{children}</span>;
-}
-
-function CopyValue({ value, label, explorer }: { value?: string | null; label: string; explorer?: string }) {
-  const [copied, setCopied] = useState(false);
-  async function copy() {
-    if (!value) return;
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1_400);
-    } catch { setCopied(false); }
-  }
-  return <div className="datum"><span>{label}</span><div>
-    {explorer && value ? <a className="mono" title={value} href={explorer} target="_blank" rel="noreferrer">{short(value, 10)} <ArrowUpRight size={13} /></a> :
-      <code title={value ?? ''}>{value ? short(value, 10) : '—'}</code>}
-    {value && <button type="button" className="icon-button copy" aria-label={`Copy ${label}`} title={copied ? 'Copied' : 'Copy'} onClick={copy}>{copied ? <Check size={14} /> : <Clipboard size={14} />}</button>}
-  </div></div>;
-}
-
-function Modal({ title, close, children }: { title: string; close: () => void; children: ReactNode }) {
-  useEffect(() => {
-    const listener = (event: KeyboardEvent) => { if (event.key === 'Escape') close(); };
-    window.addEventListener('keydown', listener);
-    return () => window.removeEventListener('keydown', listener);
-  }, [close]);
-  return <div className="overlay" onClick={close}><section role="dialog" aria-modal="true" aria-label={title} className="modal" onClick={event => event.stopPropagation()}>
-    <div className="card-head"><h2>{title}</h2><button className="icon-button" autoFocus onClick={close} aria-label="Close dialog"><X size={19} /></button></div>
-    {children}
-  </section></div>;
-}
-
-const demoText = new Map([paymentA, paymentB].map(text => [fileEntry('payment.json', 'application/json', new TextEncoder().encode(text)).sha256, text]));
-
-function Diff({ changes, local = false }: { changes: readonly Change[]; local?: boolean }) {
-  function display(value: Change['approved']) {
-    if (typeof value === 'string') return value || '(empty)';
-    if (!value) return '(absent)';
-    const matchingBytes = local && value.path === 'payment.json' ? demoText.get(value.sha256) : undefined;
-    return matchingBytes ? matchingBytes + '\nSHA-256 ' + value.sha256 : JSON.stringify(value, null, 2);
-  }
-  return changes.length > 0 && <div className="diff">{changes.map(change => <details key={change.kind + change.path}>
-    <summary><Badge tone="amber">{change.kind}</Badge><code>{change.path}</code><small>{change.fields.join(', ')}</small></summary>
-    <div className="diff-values"><div><b>Approved</b><pre>{display(change.approved)}</pre></div>
-      <div><b>Deployed</b><pre>{display(change.deployed)}</pre></div></div>
-  </details>)}</div>;
-}
-
-function Inventory({ inspection }: { inspection: Inspection }) {
-  const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState<FileResult>();
-  const [showAll, setShowAll] = useState(false);
-  const files = inspection.files.filter(file => file.path.toLowerCase().includes(query.toLowerCase()));
-  const visible = showAll ? files : files.slice(0, 8);
-  return <section className="card inventory">
-    <div className="card-head responsive-head"><div><h2>File inventory <span className="count">{inspection.files.length}</span></h2>
-      <p>File sizes and SHA-256 digests at the pinned block.</p></div>
-      <label className="filter"><Search size={16} /><input aria-label="Filter files" placeholder="Filter files…" value={query} onChange={e => { setQuery(e.target.value); setShowAll(false); }} /></label>
-    </div>
-    <div className="table-scroll"><table><thead><tr><th>File path</th><th>Size</th><th>SHA-256</th><th>Integrity</th><th aria-label="Details" /></tr></thead>
-    <tbody>{visible.map(file => <tr key={file.path} onClick={() => setSelected(file)}>
-      <td><div className="file-name"><FileCode2 size={17} /><button onClick={event => { event.stopPropagation(); setSelected(file); }} title={file.path}>{file.path}</button></div></td>
-      <td className="muted">{formatBytes(file.bytes)}</td><td><code>{file.sha256 ? short(file.sha256) : '—'}</code></td>
-      <td><Badge tone={file.status === 'verified' ? 'green' : 'amber'}>{statusName[file.status]}</Badge></td><td><ArrowUpRight size={15} /></td>
-    </tr>)}</tbody></table></div>
-    {!visible.length && <p className="empty">{query ? 'No files match the filter.' : 'No file inventory available.'}</p>}
-    {files.length > 8 && <div className="table-footer">Showing {visible.length} of {files.length} files <button className="button small" onClick={() => setShowAll(!showAll)}>{showAll ? 'Show fewer' : 'Show all files'}</button></div>}
-    {selected && <Modal title="File integrity" close={() => setSelected(undefined)}><div className="modal-body stack">
-      <p className="break"><FileCode2 size={16} /> {selected.path}</p><Badge tone={selected.status === 'verified' ? 'green' : 'amber'}>{statusName[selected.status]}</Badge>
-      <CopyValue value={selected.sha256} label="Computed SHA-256" /><CopyValue value={selected.declared} label="Declared SHA-256" />
-      <CopyValue value={selected.type} label="Content type" /><CopyValue value={String(selected.bytes)} label="Bytes" />
-    </div></Modal>}
-  </section>;
-}
-
 function App() {
   const [section, setSection] = useState<Section>('Inspection');
   const [mobileNav, setMobileNav] = useState(false);
@@ -274,6 +177,7 @@ function App() {
   const requestClosed = !!(evidence && recorded && recorded >= BigInt(evidence.sequence));
   const recordedPolicy = history.find(log => log.eventName === 'PolicySet' && log.args.version === state?.commitment.approval.policyVersion);
   const reviewerCount = recordedPolicy?.eventName === 'PolicySet' ? recordedPolicy.args.reviewers?.length : undefined;
+  const publicLink = inspection?.site && (local ? state && verificationLink('local', state) : verificationLink(inspection.name));
 
   function requireLocal() {
     if (!local) throw new Error('Start the local demo to use the approval registry.');
@@ -391,7 +295,8 @@ function App() {
 
         {section === 'Inspection' && <>
           <div className="page-head"><div><div className="eyebrow"><Activity size={15} /> ONCHAIN VERIFICATION</div><h1>Deployment inspection</h1><p>Resolve a DeWEB site, verify its files, and check which release is approved.</p></div>
-            {inspection?.site && <button className="button export-button" onClick={() => download('buidl-inspection.json', inspection)}><ArrowDownToLine size={16} /> Export inspection</button>}
+            <div className="actions">{inspection?.site && <button className="button export-button" onClick={() => download('buidl-inspection.json', inspection)}><ArrowDownToLine size={16} /> Export inspection</button>}
+            {publicLink && <a className="button" href={publicLink} target="_blank" rel="noreferrer"><ArrowUpRight size={16} /> Verification link</a>}</div>
           </div>
           <section className="inspect-card">
             <div className="inspect-icon"><Globe2 size={22} /></div>
@@ -453,8 +358,8 @@ function App() {
             <div className="work-grid"><section className="card content-card stack"><div className="row"><h2>Approval policy</h2><Badge tone={state?.authorityCurrent ? 'green' : 'amber'}>{state?.authorityCurrent ? `Version ${state.policy.version}` : 'Onboarding needed'}</Badge></div>
               <p>{state?.policy.reviewers.length ? `${state.policy.threshold} of ${state.policy.reviewers.length} configured reviewers` : 'Configure independent reviewer addresses with the holder wallet.'}</p>
               {state?.policy.reviewers.map(reviewer => <CopyValue key={reviewer} label="Reviewer" value={reviewer} />)}
-              <details><summary>Set or rotate policy</summary><div className="stack"><label className="field">Reviewer addresses<textarea value={reviewersInput} onChange={e => setReviewersInput(e.target.value)} placeholder="One address per line" /></label><label className="field">Threshold<input type="number" min={1} max={31} value={threshold} onChange={e => setThreshold(Number(e.target.value))} /></label>
-                <p>Creating a new version invalidates the previous release commitment.</p><button className="button" disabled={!!busy || !wallet} onClick={() => void mutatePolicy(false)}>Record policy version</button></div></details>
+              <details open={state?.policy.version === 0n || undefined}><summary>{state?.policy.version ? 'Set or rotate policy' : 'Register app'}</summary><div className="stack"><label className="field">Reviewer addresses<textarea value={reviewersInput} onChange={e => setReviewersInput(e.target.value)} placeholder="One address per line" /></label><label className="field">Threshold<input type="number" min={1} max={31} value={threshold} onChange={e => setThreshold(Number(e.target.value))} /></label>
+                <p>{state?.policy.version ? 'Creating a new version invalidates the previous release commitment.' : 'Connect the site holder to authorize this policy.'}</p><button className="button" disabled={!!busy || !wallet} onClick={() => void mutatePolicy(false)}>{state?.policy.version ? 'Record policy version' : 'Register app'}</button></div></details>
             </section>
             <section className="card content-card stack"><h2>Approval request</h2><p>{manifest ? `Selected manifest · ${manifest.release}` : 'Create or import a release manifest first.'}</p><label className="checkbox"><input type="checkbox" checked={rollback} onChange={e => setRollback(e.target.checked)} /> Explicit rollback</label>
               <div className="actions"><button className="button primary" disabled={!manifest || !!busy} onClick={() => void requestApproval()}>Create request</button><label className="button upload"><Upload size={16} /> Import request<input type="file" accept=".json" onChange={e => { void importEvidence(e.currentTarget.files?.[0]); e.currentTarget.value = ''; }} /></label></div>
@@ -501,4 +406,6 @@ function App() {
   </div>;
 }
 
-createRoot(document.getElementById('root')!).render(<App />);
+const query = new URLSearchParams(location.search);
+const publicSite = query.get('verify');
+createRoot(document.getElementById('root')!).render(publicSite === null ? <App /> : <PublicVerification site={publicSite} query={query} />);
