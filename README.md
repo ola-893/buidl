@@ -8,14 +8,14 @@ buidl verifies X Layer DeWEB bytes against TapeOut and compares complete deploym
 
 - [Web dashboard](https://ola-893.github.io/buidl/) for inspecting a deployment and preparing a manifest.
 - [Public verification](https://ola-893.github.io/buidl/?verify=1.2.230.tape) for a fresh content check without a wallet. From a resolved dashboard inspection, open **Verification link** to share a different site.
-- [Installable CLI](https://github.com/ola-893/buidl/releases) for terminal and CI workflows. Node.js 22.13+ is required.
+- [Installable CLI](https://github.com/ola-893/buidl/releases/tag/v0.3.0) for terminal and CI workflows. Node.js 22.13+ is required.
 
 ```sh
-npm install -g git+https://github.com/ola-893/buidl.git
+npm install -g https://github.com/ola-893/buidl/releases/download/v0.3.0/buidl-0.3.0.tgz
 buidl inspect 1.2.230.tape
 ```
 
-You can also download the versioned `.tgz` from the GitHub release and run `npm install -g ./buidl-0.2.0.tgz`. To build the package yourself, run `npm ci` and `npm pack` from the checkout. The CLI is distributed through this repository and its GitHub releases.
+CLI v0.3.0 includes the X Layer pilot commands. To build the package yourself, run `npm ci` and `npm pack` from the checkout.
 
 Public links perform fresh reads when opened, recheck while open, and display the checked block and UTC check time. A live X Layer link reports content integrity and checks current approval when the site is enrolled in a recognized authority. A loopback demo link checks the actual Anvil registry and shows its reviewer evidence and match status. It is scoped to that particular local registry instance and, when available, its current release digest.
 

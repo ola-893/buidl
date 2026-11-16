@@ -33,7 +33,7 @@ The script requires an X Layer mainnet fork on the fixed loopback endpoint. It m
 
 1. Select an opened circuit your team controls. Confirm its TapeOut name and holder. Use the project's **Approvals** panel to deploy the derived authority, then enroll with the holder wallet. Alternatively, `buidl plan-xlayer <tape-name>` prints an unsigned deployment transaction first. Run it again after deployment appears in a checked block to obtain the enrollment transaction. Wait for the checked block to include enrollment before continuing. Keep a copy of the original holder, authority and registry addresses.
 2. Connect the governing wallet and register the independent reviewer policy. Import or generate the manifest, export an approval request, have reviewers sign on the same X Layer dashboard, and record the signed request. Use an active TapeOut name. If renewal is needed while the circuit is enrolled, read `DomainBinding.monthlyFee()` and have the governor call `bind(name, months)` on the authority with the exact current value.
-3. Use the CLI from this checkout (`npm run buidl --`), or install a package built with `npm pack`. Install Foundry for the live publisher and use a configured governor keystore alias. Operator commands with `--broadcast` send transactions on chain 196. The initial release gate and verification are read-only.
+3. Install the [v0.3.0 CLI](https://github.com/ola-893/buidl/releases/tag/v0.3.0), or run the commands from this checkout with `npm run buidl --`. Install Foundry for the live publisher and use a configured governor keystore alias. Operator commands with `--broadcast` send transactions on chain 196. The initial release gate and verification are read-only.
 
 ```sh
 buidl gate-xlayer '<tape-name>' ./dist ./release.json
