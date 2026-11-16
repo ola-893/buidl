@@ -1,0 +1,48 @@
+{
+  "source": "live",
+  "name": "1.2.230.tape",
+  "status": "complete",
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 13614,
+      "type": "text/html; charset=utf-8",
+      "declared": "0xe1b68f30ffce15655916c59f52b4313398d79a1bdaf075bae81639c92f9279a3",
+      "status": "verified",
+      "sha256": "0xe1b68f30ffce15655916c59f52b4313398d79a1bdaf075bae81639c92f9279a3"
+    }
+  ],
+  "block": {
+    "number": "76064127",
+    "hash": "0x8759947ae861a009c5c0e381a84a7157233d66eedc30b8582412fbe6d00b6267"
+  },
+  "site": {
+    "chainId": 196,
+    "processor": "0x8a60b4a4bcf4066f5e5f9a406fe09c5e4f52a58e",
+    "circuitId": "1",
+    "container": "0x550046eb68f9c5cf9d41f56ed5893b0307f4ce54"
+  },
+  "holder": "0x934d315c0a9c0866d393b722c1805f2b6b20b816",
+  "activation": "active",
+  "registry": "0xd6efb7adcc9c83dc4924ad56f6a8e4e969b9adb6",
+  "fallback": "",
+  "artifacts": {
+    "site": {
+      "chainId": 196,
+      "processor": "0x8a60b4a4bcf4066f5e5f9a406fe09c5e4f52a58e",
+      "circuitId": "1",
+      "container": "0x550046eb68f9c5cf9d41f56ed5893b0307f4ce54"
+    },
+    "routing": {
+      "fallback": ""
+    },
+    "files": [
+      {
+        "path": "index.html",
+        "bytes": 13614,
+        "type": "text/html; charset=utf-8",
+        "sha256": "0xe1b68f30ffce15655916c59f52b4313398d79a1bdaf075bae81639c92f9279a3"
+      }
+    ]
+  }
+}

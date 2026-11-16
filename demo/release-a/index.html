@@ -1,0 +1,6 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>buidl Demo Checkout</title>
+<style>body{font:16px system-ui;background:#efedf8;margin:0;display:grid;place-items:center;min-height:100vh}main{background:white;border-radius:16px;padding:32px;max-width:430px}code{overflow-wrap:anywhere}h1{margin:12px 0}small{color:#5638b8}</style>
+<main><small>SIMULATED CHECKOUT · NO FUNDS</small><h1>Studio membership</h1><p>Order total <strong>0.50 test OKB</strong></p><p>Payment destination</p><code id="destination">Loading…</code></main>
+<script>fetch('./payment.json').then(response=>response.json()).then(({destination})=>document.querySelector('#destination').textContent=destination);</script>
+</html>
