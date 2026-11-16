@@ -138,15 +138,16 @@ export function TestnetDashboard() {
     try {
       const { account } = await checkedWallet();
       const estimate = action.plan;
-      if (estimate.nonce !== undefined && await client.getTransactionCount({ address: account, blockTag: 'pending' }) !== estimate.nonce) {
+      const nonce = await client.getTransactionCount({ address: account, blockTag: 'pending' });
+      if (estimate.nonce !== undefined && nonce !== estimate.nonce) {
         throw new Error('The account nonce changed. Rebuild the deployment plan.');
       }
       // Use the standard injected-wallet method directly. Do not retry a failed
       // eth_sendTransaction through an alternative wallet namespace.
       const hash = await provider!.provider.request({ method: 'eth_sendTransaction', params: [{
         from: account, ...(estimate.to ? { to: estimate.to } : {}), chainId: toHex(1952),
-        data: estimate.data, gas: toHex(BigInt(estimate.gas)), value: '0x0',
-        ...(estimate.nonce === undefined ? {} : { nonce: toHex(estimate.nonce) }),
+        data: estimate.data, gas: toHex(BigInt(estimate.gas)), gasPrice: toHex(BigInt(estimate.gasPrice)),
+        nonce: toHex(nonce), value: '0x0',
       }] });
       if (!isHash(hash)) throw new Error('The wallet did not return a transaction hash. Check wallet activity before retrying.');
       record({ label: estimate.label, status: 'submitted', hash, account });

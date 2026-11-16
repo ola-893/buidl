@@ -67,6 +67,8 @@ Previously approved artifacts require an explicit rollback request and fresh rev
 
 The actual holder deployed the simulated circuit/store at `0xe97847558dded18fc6208ce47eeec7ab73c09d9d` in [transaction 0x8491…0b03](https://www.okx.com/web3/explorer/xlayer-test/tx/0x8491f8b356c57d79358b8f5ca9379eef00742c5b04b379026e7e104371f70b03), block 46391574, paying 0.000028718941435947 test OKB. The [RPC receipt](testnet/fixture-deployment-receipt.json) is saved. The authority, enrollment and actual reviewer signatures remain pending. The structured [pilot status](testnet/pilot-status.json) distinguishes local results from the partial public journey.
 
-The wallet's selected RPC is the second official endpoint, `https://xlayertestrpc.okx.com/terigon`. The dashboard uses both official endpoints as fallbacks for unavailable reads; this is availability fallback, not independent RPC agreement.
+MetaMask subsequently reported unavailable gas-price RPC reads (`-32002`) before the authority could be submitted. Its selected endpoint is now `https://testrpc.xlayer.tech`, listed in the [Ethereum chain registry](https://github.com/ethereum-lists/chains/blob/master/_data/chains/eip155-1952.json); chain ID 1952, the deployed fixture runtime and a gas-price read were independently checked there. The [unsigned authority plan](testnet/authority-deployment-plan.json) resumes at nonce 1. The dashboard supplies the reviewed gas price and checks the pending nonce immediately before opening the wallet.
+
+The dashboard uses both documented `/terigon` endpoints as fallbacks for unavailable reads; this is availability fallback, not independent RPC agreement. The production build is served at the same local origin for the remaining signing steps.
 
 The requested public reviewer addresses are `0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E` and `0x3c25aD59862531A022c96A49c067E991441240C5`. Neither has signed a pilot approval yet.

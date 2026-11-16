@@ -10,8 +10,8 @@
   "balanceWei": "199971281058564053",
   "pendingNonce": 1,
   "block": {
-    "number": "46391297",
-    "hash": "0x1d5b490c1cd2d4bebc581072619b28ef97dbeb16ce8a9d06be572588a99f2387"
+    "number": "46391574",
+    "hash": "0xf78cb7559f04187f0466e8246a17b88080a91c7b22b7234c3edb4346ad8b71bb"
   },
   "predictedConfig": {
     "kind": "testnet-fixtures",
@@ -55,10 +55,11 @@
   "actualWallet": {
     "chainId": 1952,
     "initialChainId": 11155111,
-    "lastSubmissionError": 4100,
+    "lastSubmissionError": -32002,
     "permissionRepair": "Disconnected only the local buidl origin and reconnected on chain 1952",
-    "rpcSelected": "https://xlayertestrpc.okx.com/terigon",
-    "journey": "First fixture deployed with actual holder wallet. Authority deployment and approval journey pending."
+    "rpcSelected": "https://testrpc.xlayer.tech",
+    "journey": "First fixture deployed with actual holder wallet. Authority deployment and approval journey pending.",
+    "latestFailure": "MetaMask RPC gas-price circuit breaker; authority not submitted"
   },
   "scope": "Simulated DeWEB/TapeOut fixtures. Not a live integration with actual TapeOut contracts.",
   "mainnetTransactionsSent": false
