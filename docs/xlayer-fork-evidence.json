@@ -1,0 +1,27 @@
+{
+  "source": "anvil-xlayer-fork",
+  "forkFromBlock": 76068600,
+  "name": "106.2.0.tape",
+  "site": {
+    "chainId": 196,
+    "processor": "0x839bdd6fa7a66416a609a735e11de5411b98574e",
+    "circuitId": "106",
+    "container": "0x6c62a4fcec870e018d6ecb2f50d210e3c9b5719a"
+  },
+  "authority": "0x2a2a4dc429c90b7f41013801fbd0b4237a2daefb",
+  "registry": "0x6e80ab60bf58c3b687209986927a2f049c5e9b74",
+  "deployment": "0x80cd60c287732aa6c55e8fedbadc22335cda471b7a418ce62c2e5e22299a1400",
+  "enrollment": "0xd9d820728c9ea0913380798626f1db0f80a7ee510097ab0666c331db05673af5",
+  "approval": "0xd9e6fb6f95fe3f3e648fbedce9ef0f95fb7a033d9f3b85fb0dec228e10490a17",
+  "checked": {
+    "number": "76068627",
+    "hash": "0x13d32c3ad49e6113bc116cc9f5362799991ed4355bf7878004038bcdc04a2971",
+    "timestamp": "1794838554"
+  },
+  "verifiedFiles": ["index.html", "payment.json"],
+  "directOperatorRejected": true,
+  "divergentWriteDetected": true,
+  "ownershipExit": "0xcce3af4cb339c4305c4807bf419392b61eb2c0c086b2c28f3c8399c01bfcbf48",
+  "reenrollment": "0x44fdc971ad21ed290de2c0b455f6e09a132d63ebe0abb9cb4b0668435bea215d",
+  "previousApprovalInvalidated": true
+}

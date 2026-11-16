@@ -30,9 +30,9 @@ export type FileResult = {
 };
 
 export type Inspection = {
-  source: 'live' | 'local';
+  source: 'live' | 'local' | 'fork';
   name: string;
-  block?: { number: string; hash: Hex };
+  block?: { number: string; hash: Hex; timestamp?: string };
   site?: Site;
   holder?: Address | null;
   registry?: Address;
@@ -160,14 +160,14 @@ export async function readInventory(base: Inspection & { site: Site; registry: A
 function headerRequest(block: Hex): RpcRequest {
   return {
     method: 'eth_getBlockByNumber', params: [block, false],
-    normalize: (response: { number: string; hash: string }) => {
+    normalize: (response: { number: string; hash: string; timestamp: string }) => {
       if (BigInt(response.number) !== BigInt(block)) throw new Error('Unexpected block number');
-      return { number: BigInt(response.number).toString(), hash: digest(response.hash) };
+      return { number: BigInt(response.number).toString(), hash: digest(response.hash), timestamp: BigInt(response.timestamp).toString() };
     },
   };
 }
 
-async function header(block: Hex, rpc: Rpc): Promise<NonNullable<Inspection['block']>> {
+export async function header(block: Hex, rpc: Rpc): Promise<NonNullable<Inspection['block']>> {
   const [result] = await rpc.many([headerRequest(block)]);
   if ((!result || !('ok' in result)) || !result.raw) throw new Error('Block header unavailable.');
   return result.raw as NonNullable<Inspection['block']>;
@@ -179,16 +179,20 @@ export function liveRpc(fetchImpl?: typeof fetch) {
   return createRpc({ ...rpcOptionsFor(XLAYER_MAINNET, endpoints), fetchImpl, shuffle: false, timeoutMs: 6_000, retries: 1 });
 }
 
-export async function inspectLive(input: string, rpc = liveRpc()): Promise<Inspection> {
+export function inspectLive(input: string, rpc = liveRpc()) {
+  return inspectTapeOut(input, rpc, { source: 'live' });
+}
+
+export async function inspectTapeOut(input: string, rpc: Rpc, options: { source: 'live' } | { source: 'fork'; block: Hex }): Promise<Inspection> {
   setLocale('en');
-  let base = unavailable('live', input.trim(), 'Verification unavailable.');
+  let base = unavailable(options.source, input.trim(), 'Verification unavailable.');
   try {
     const parsed = explicitXLayer(input);
-    if (rpc.operatorCount < 2 || rpc.quorum !== 2) throw new Error('Two distinct RPC operators are required.');
+    if (options.source === 'live' && (rpc.operatorCount < 2 || rpc.quorum !== 2)) throw new Error('Two distinct RPC operators are required.');
     const [chain] = await rpc.many([{ method: 'eth_chainId', params: [] }], { all: true });
     if ((!chain || !('ok' in chain)) || BigInt(chain.value) !== 196n) throw new Error('RPC is on the wrong chain.');
-    const pin = await rpc.pinBlock();
-    if (rpc.pinLag() > BigInt(XLAYER_MAINNET.maxPinLagBlocks ?? 300)) throw new Error('Stale block. RPC heads are too far apart.');
+    const pin = options.source === 'fork' ? options.block : await rpc.pinBlock();
+    if (options.source === 'live' && rpc.pinLag() > BigInt(XLAYER_MAINNET.maxPinLagBlocks ?? 300)) throw new Error('Stale block. RPC heads are too far apart.');
     const pinned = await header(pin, rpc);
     base = { ...base, block: pinned };
     // Both configured providers accept EIP-1898. Bind every state read to the agreed hash.

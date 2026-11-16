@@ -5,13 +5,18 @@ import { canonical, manifestDigest, parseManifest, parseSite } from './core/mani
 import { inspectLive } from './core/tapeout';
 import { compareLocal, inspectLocal, localState, outcomes, parseLocalConfig } from './core/local';
 import { gate, publishLocal } from './publish';
+import { xLayerCli } from './cli-xlayer';
 
 const help = `buidl
   inspect <X Layer identifier>
   manifest <build-dir> --site <site.json> --release <id> --out <manifest.json> [--fallback <path>] [--commit <hex>] [--provenance <text>]
   gate <build-dir> <manifest.json> <trusted-local-config.json>
   publish-local <build-dir> <manifest.json> <trusted-local-config.json>
-  verify-local <manifest.json> <trusted-local-config.json>`;
+  verify-local <manifest.json> <trusted-local-config.json>
+  plan-xlayer <X Layer identifier>
+  verify-xlayer <X Layer identifier>
+  gate-xlayer <X Layer identifier> <build-dir> <manifest.json>
+  publish-xlayer <X Layer identifier> <build-dir> <manifest.json> --broadcast --account <Foundry keystore alias>`;
 
 const load = async (path: string) => JSON.parse(await readFile(path, 'utf8')) as unknown;
 
@@ -70,6 +75,7 @@ async function main() {
     }
     return;
   }
+  if (await xLayerCli(command, args)) return;
   throw new Error(help);
 }
 

@@ -10,12 +10,14 @@ import { foundry } from 'viem/chains';
 import { approvalTypedData, parseEvidence, registryAbi, signaturesFor, siteTuple, type Evidence } from '../core/approval';
 import { assertCurrentEvidence, compareLocal, inspectLocal, localClient, localHistory, localState, newRequest, outcomes, parseLocalConfig, type LocalConfig, type LocalState } from '../core/local';
 import { address, compare, fileEntry, manifestDigest, MAX_FILE_BYTES, MAX_FILES, MAX_SITE_BYTES, parseManifest, sameSite, type Manifest } from '../core/manifest';
-import { EXAMPLE_SITE, inspectLive, unavailable, XLAYER_EXPLORER, type Inspection } from '../core/tapeout';
+import { EXAMPLE_SITE, unavailable, XLAYER_EXPLORER, type Inspection } from '../core/tapeout';
 import { walletClient, watchWallets, type Provider } from './wallet';
 import { contentTypeFor } from '../core/content-type';
 import { Badge, CopyValue, Diff, Inventory, Modal } from './evidence-components';
 import { download, errorText, fetchJson, localDemoAvailable, numeric, short } from './web-utils';
 import { PublicVerification, verificationLink } from './public-verification';
+import { XLayerApprovals } from './xlayer-approvals';
+import { checkXLayer, type XLayerApproval } from '../core/xlayer-release';
 import '@fontsource-variable/inter/wght.css';
 import '@fontsource-variable/dm-sans/wght.css';
 import './style.css';
@@ -32,6 +34,8 @@ function App() {
   const [mode, setMode] = useState<'live' | 'local'>('live');
   const [input, setInput] = useState(EXAMPLE_SITE);
   const [inspection, setInspection] = useState<Inspection>();
+  const [liveApproval, setLiveApproval] = useState<XLayerApproval>();
+  const [liveOutcome, setLiveOutcome] = useState<keyof typeof outcomes>();
   const [config, setConfig] = useState<LocalConfig>();
   const [state, setState] = useState<LocalState>();
   const [history, setHistory] = useState<HistoryLog[]>([]);
@@ -78,7 +82,12 @@ function App() {
       setState(undefined);
       setHistory([]);
       setInspection(undefined);
-      setInspection(await inspectLive(identifier));
+      setLiveApproval(undefined);
+      setLiveOutcome(undefined);
+      const result = await checkXLayer(identifier);
+      setInspection(result.inspection);
+      setLiveApproval(result.approval);
+      setLiveOutcome(result.outcome);
     });
   }
 
@@ -177,7 +186,7 @@ function App() {
   const requestClosed = !!(evidence && recorded && recorded >= BigInt(evidence.sequence));
   const recordedPolicy = history.find(log => log.eventName === 'PolicySet' && log.args.version === state?.commitment.approval.policyVersion);
   const reviewerCount = recordedPolicy?.eventName === 'PolicySet' ? recordedPolicy.args.reviewers?.length : undefined;
-  const publicLink = inspection?.site && (local ? state && verificationLink('local', state) : verificationLink(inspection.name));
+  const publicLink = inspection?.site && (local ? state && verificationLink('local', state) : verificationLink(inspection.name, liveApproval));
 
   function requireLocal() {
     if (!local) throw new Error('Start the local demo to use the approval registry.');
@@ -313,7 +322,7 @@ function App() {
           <div className="stats">
             <section className="card stat"><div className="stat-label"><span className="stat-icon"><ShieldCheck size={19} /></span> Content integrity</div><strong>{complete ? 'Verified' : inspection ? inspection.status === 'partial' ? 'Incomplete' : inspection.status === 'empty' ? 'No files' : 'Unavailable' : 'Checking…'}</strong><span>{inspection?.files.length ? `${verified} of ${inspection.files.length} files verified` : 'SHA-256 byte verification'}</span></section>
             <section className="card stat"><div className="stat-label"><span className="stat-icon blue"><Link2 size={19} /></span> Pinned block</div><strong>{inspection?.block ? numeric.format(Number(inspection.block.number)) : '—'}</strong><span>{mode === 'live' ? 'Two independent RPC operators' : 'Anvil loopback RPC'}</span></section>
-            <section className="card stat"><div className="stat-label"><span className="stat-icon gold"><GitCompareArrows size={19} /></span> Release approval</div><strong className="approval-stat">{comparison?.outcome === 'match' ? 'Release matches' : comparison?.outcome === 'differs' ? 'Deployment differs' : comparison?.outcome === 'revoked' ? 'Revoked or expired' : (comparison?.outcome === 'unavailable' || (local && !state && inspection?.status === 'unavailable')) ? 'Verification unavailable' : mode === 'live' ? 'Registry unavailable' : 'No qualifying approval'}</strong><span>{mode === 'live' ? 'Read-only mainnet inspection' : 'Independent reviewer policy'}</span></section>
+            <section className="card stat"><div className="stat-label"><span className="stat-icon gold"><GitCompareArrows size={19} /></span> Release approval</div><strong className="approval-stat">{comparison?.outcome === 'match' ? 'Release matches' : comparison?.outcome === 'differs' ? 'Deployment differs' : comparison?.outcome === 'revoked' ? 'Revoked or expired' : (comparison?.outcome === 'unavailable' || (local && !state && inspection?.status === 'unavailable')) ? 'Verification unavailable' : mode === 'live' ? liveApproval && liveOutcome ? outcomes[liveOutcome].slice(0, -1) : 'Registry unavailable' : 'No qualifying approval'}</strong><span>{mode === 'live' ? 'X Layer release verification' : 'Independent reviewer policy'}</span></section>
           </div>
           {inspection?.detail && <div className="notice error"><CircleAlert size={18} /> <span>{inspection.detail}</span></div>}
           {inspection?.site && <section className="card identity"><div className="card-head responsive-head"><div><div className="identity-title"><span className="identity-icon"><Globe2 size={17} /></span><h2>{inspection.name}</h2></div><p>Resolved deployment identity</p></div><Badge tone={inspection.activation === 'active' ? 'green' : 'neutral'}>{inspection.activation === 'active' ? 'Activated on DeWEB' : inspection.activation === 'inactive' ? 'Name inactive' : inspection.activation === 'local' ? 'Controlled local site' : 'Activation unavailable'}</Badge></div>
@@ -346,14 +355,24 @@ function App() {
             <CopyValue label="Manifest digest" value={manifestDigest(manifest)} /><CopyValue label="Container" value={manifest.site.container} />
             <div className="actions"><button className="button" onClick={() => download(`${manifest.release}.json`, manifest)}><ArrowDownToLine size={16} /> Download manifest</button><button className="button primary" onClick={() => nav('Approvals')}>Continue to approvals <ArrowRight size={16} /></button></div>
           </section>}
-          <section className="card content-card stack"><h2>Publish an approved build</h2><p>{local ? 'The local CLI checks the exact build against the active registry commitment, then uploads the staged bytes.' : 'Live X Layer is read-only here. TapeOut holders can publish through the SiteRegistry workflow documented in the integration guide.'}</p>
-            {local && <pre className="command">npm run buidl -- publish-local &lt;build-dir&gt; &lt;manifest.json&gt; public/local-demo/config.json</pre>}
+          <section className="card content-card stack"><h2>Publish an approved build</h2><p>{local ? 'The local CLI checks the exact build against the active registry commitment, then uploads the staged bytes.' : 'For an enrolled X Layer site, run the CLI gate against the approved build, then publish the same staged bytes.'}</p>
+            {local ? <pre className="command">npm run buidl -- publish-local &lt;build-dir&gt; &lt;manifest.json&gt; public/local-demo/config.json</pre>
+              : <pre className="command">buidl gate-xlayer &lt;tape-name&gt; &lt;build-dir&gt; &lt;manifest.json&gt;</pre>}
           </section>
         </>}
 
         {section === 'Approvals' && <>
           <div className="page-head"><div><div className="eyebrow"><ShieldCheck size={15} /> INDEPENDENT REVIEW</div><h1>Release approvals</h1><p>Collect typed reviewer signatures for a specific release.</p></div></div>
-          {!local && <section className="card content-card stack"><h2>Approval registry on Anvil</h2><p>Start the controlled local demo for policy onboarding, wallet signing, and release commitments.</p>{localDemoAvailable && <button className="button" onClick={() => void loadLocal()}>Open local demo <ArrowRight size={16} /></button>}</section>}
+          {!local && <XLayerApprovals key={inspection?.name ?? 'no-site'} inspection={inspection} approval={liveApproval} manifest={manifest}
+            account={wallet?.account} connect={() => setWalletDialog(true)} openWallet={() => {
+              if (!wallet) throw new Error('Connect the signing wallet.');
+              return switchChain(wallet, wallet.account);
+            }} refresh={async () => {
+              const view = await checkXLayer(inspection?.name ?? input);
+              setInspection(view.inspection);
+              setLiveApproval(view.approval);
+              setLiveOutcome(view.outcome);
+            }} />}
           {local && <>
             <div className="work-grid"><section className="card content-card stack"><div className="row"><h2>Approval policy</h2><Badge tone={state?.authorityCurrent ? 'green' : 'amber'}>{state?.authorityCurrent ? `Version ${state.policy.version}` : 'Onboarding needed'}</Badge></div>
               <p>{state?.policy.reviewers.length ? `${state.policy.threshold} of ${state.policy.reviewers.length} configured reviewers` : 'Configure independent reviewer addresses with the holder wallet.'}</p>
@@ -382,7 +401,11 @@ function App() {
             {comparison && <><h3>{outcomes[comparison.outcome]}</h3><Diff changes={comparison.changes} local /></>}
             {inspection?.site && <button className="button" onClick={() => download('buidl-inspection.json', inspection)}><ArrowDownToLine size={16} /> Download inspection</button>}
           </section>
-          <section className="card content-card stack"><h2>Registry history</h2><p>{local ? 'Transactions on your controlled local chain.' : 'No buidl registry is deployed for live X Layer inspection.'}</p>
+          <section className="card content-card stack"><h2>Registry history</h2><p>{local ? 'Transactions on your controlled local chain.' : liveApproval ? 'Current X Layer registry commitment at the checked block.' : 'The current circuit holder is outside an enrolled buidl authority.'}</p>
+            {!local && liveApproval && <>
+              <CopyValue label="Approval registry" value={liveApproval.registry} explorer={`${XLAYER_EXPLORER}/address/${liveApproval.registry}`} />
+              {liveApproval.commitment.approval.sequence > 0n && <CopyValue label="Manifest digest" value={liveApproval.commitment.approval.manifestDigest} />}
+            </>}
             {local && <CopyValue label="Approval registry" value={local.registry} />}
             {history.map(log => <details className="event" key={log.transactionHash + String(log.logIndex)}><summary><strong>{log.eventName === 'PolicySet' ? 'Policy updated' : log.eventName === 'ReleaseRecorded' ? `Release #${log.args.sequence} recorded` : `Release #${log.args.sequence} revoked`}</strong> <small>Block {String(log.blockNumber)}</small></summary>
               <CopyValue label="Transaction" value={log.transactionHash} /><pre>{JSON.stringify(log.args, (_, value) => typeof value === 'bigint' ? value.toString() : value, 2)}</pre></details>)}

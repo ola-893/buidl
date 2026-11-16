@@ -7,3 +7,4 @@ playwright-report/
 public/local-demo/
 build-cli/
 buidl-*.tgz
+build-contracts/

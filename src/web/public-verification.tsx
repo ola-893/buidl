@@ -2,18 +2,19 @@ import { useEffect, useState } from 'react';
 import { ArrowDownToLine, ArrowLeft, ArrowUpRight, Blocks, Link2, LoaderCircle, RefreshCw, ShieldCheck } from 'lucide-react';
 import { compareCommitment, inspectLocal, localState, outcomes, parseLocalConfig, type LocalState } from '../core/local';
 import { digest } from '../core/manifest';
-import { inspectLive, unavailable, XLAYER_EXPLORER, type Inspection } from '../core/tapeout';
+import { unavailable, XLAYER_EXPLORER, type Inspection } from '../core/tapeout';
+import { checkXLayer, type XLayerApproval } from '../core/xlayer-release';
 import { Badge, CopyValue, Inventory } from './evidence-components';
 import { download, errorText, fetchJson, localDemoAvailable, numeric } from './web-utils';
 
 const recheckMs = 60_000;
 type Outcome = keyof typeof outcomes;
 
-export function verificationLink(site: string, state?: LocalState) {
+export function verificationLink(site: string, state?: LocalState | XLayerApproval) {
   const url = new URL(location.pathname, location.origin);
   url.searchParams.set('verify', site);
   if (state) {
-    url.searchParams.set('instance', state.instanceSalt);
+    if (site === 'local') url.searchParams.set('instance', state.instanceSalt);
     if (state.commitment.approval.sequence > 0n) url.searchParams.set('release', state.commitment.approval.manifestDigest);
   }
   return url.href;
@@ -39,10 +40,24 @@ type Report = {
 
 async function verify(site: string, instance: string | null, release: string | null): Promise<Omit<Report, 'checkedAt'>> {
   if (site !== 'local') {
+    const { inspection, approval, outcome, reason } = await checkXLayer(site);
+    if (!approval) return { inspected: inspection, outcome, note: reason ?? 'No recognized buidl authority currently holds this site’s circuit.' };
+    if (release && digest(release) !== approval.commitment.approval.manifestDigest) {
+      return { inspected: inspection, outcome: 'none', note: 'This release is no longer the registry’s current commitment.' };
+    }
+    const { approval: entry, signers } = approval.commitment;
+    const current = approval.authorityCurrent && approval.policy.version === entry.policyVersion;
     return {
-      inspected: await inspectLive(site),
-      outcome: 'unavailable',
-      note: 'Approval verification requires a configured X Layer registry.',
+      inspected: inspection, outcome,
+      note: approval.publication.inProgress ? 'The site has an open publication attempt.' :
+        inspection.activation === 'inactive' ? 'The TapeOut name is inactive at this block.' : undefined,
+      approval: entry.sequence === 0n ? undefined : {
+        registry: approval.registry, manifestDigest: entry.manifestDigest, artifactDigest: entry.artifactDigest,
+        policyVersion: entry.policyVersion.toString(), sequence: entry.sequence.toString(),
+        expiry: new Date(Number(entry.expiry) * 1000).toISOString(), signers,
+        reviewerCount: current ? approval.policy.reviewers.length : undefined,
+        threshold: current ? Number(approval.policy.threshold) : undefined,
+      },
     };
   }
   if (!localDemoAvailable) throw new Error('This link requires the local buidl dev server and its Anvil demo.');
