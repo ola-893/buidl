@@ -15,6 +15,7 @@ export async function publishXLayer(
   const { manifest } = staged;
   const { inspection, approval } = await check();
   const committed = requireXLayerGate(manifest, inspection, approval);
+  if (inspection.activation !== 'active') throw new Error('Activate the TapeOut name before publishing.');
   if (!approval || inspection.fallback === undefined ||
       (inspection.status !== 'complete' && inspection.status !== 'empty' &&
         (inspection.status !== 'partial' || !inspection.files.length))) {

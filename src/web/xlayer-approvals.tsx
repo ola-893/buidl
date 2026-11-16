@@ -5,8 +5,8 @@ import { xLayer } from 'viem/chains';
 import { approvalTypedData, parseEvidence, registryAbi, signaturesFor, siteTuple, type Evidence } from '../core/approval';
 import { address, manifestDigest, type Manifest } from '../core/manifest';
 import { liveRpc, type Inspection } from '../core/tapeout';
-import { assertXLayerRequest, checkXLayer, circuitAbi, xLayerAuthoritySetup, xLayerRequest, type XLayerApproval } from '../core/xlayer-release';
-import { CopyValue } from './evidence-components';
+import { assertXLayerRequest, authorityAbi, authorityDeployment, checkXLayer, circuitAbi, xLayerAuthoritySetup, xLayerRequest, type XLayerApproval } from '../core/xlayer-release';
+import { CopyValue, Modal } from './evidence-components';
 import { download, errorText } from './web-utils';
 import { type walletClient } from './wallet';
 
@@ -28,6 +28,7 @@ export function XLayerApprovals({ inspection, approval, manifest, account, conne
   const [rollback, setRollback] = useState(false);
   const [request, setRequest] = useState<Evidence>();
   const [busy, setBusy] = useState(false);
+  const [custodyAction, setCustodyAction] = useState<'enroll' | 'return'>();
   const [notice, setNotice] = useState<{ text: string; error?: boolean }>();
   const site = inspection?.site;
 
@@ -75,6 +76,16 @@ export function XLayerApprovals({ inspection, approval, manifest, account, conne
           args: [account, setup.address, BigInt(view.site.circuitId), salt] });
         await send(view.site.processor, data);
       }
+    });
+  }
+
+  function returnCircuit() {
+    return run(async () => {
+      if (!site || !approval || account !== approval.governor || authorityDeployment(site).address !== approval.authority) {
+        throw new Error('Connect the governing wallet to return this circuit.');
+      }
+      // The contract checks live custody itself. Withdrawal does not depend on fresh SiteRegistry reads.
+      await send(approval.authority, encodeFunctionData({ abi: authorityAbi, functionName: 'returnCircuit' }));
     });
   }
 
@@ -149,12 +160,14 @@ export function XLayerApprovals({ inspection, approval, manifest, account, conne
       <p>For an opened, controlled site, deploy its authority and use the holder wallet to enroll the circuit NFT. The authority holds the circuit until the governing wallet releases it.</p>
       <div className="actions">
         <button className="button" disabled={busy || !account} onClick={() => void enroll(true)}>Deploy authority</button>
-        <button className="button" disabled={busy || !account} onClick={() => void enroll(false)}>Enroll circuit</button>
+        <button className="button" disabled={busy || !account} onClick={() => setCustodyAction('enroll')}>Enroll circuit</button>
       </div>
     </>}
     {site && approval && <>
       <CopyValue label="Approval registry" value={approval.registry} />
-      <CopyValue label="Governing wallet" value={approval.authorityCurrent ? approval.policy.holder : undefined} />
+      <CopyValue label="Governing wallet" value={approval.governor} />
+      <CopyValue label="Custody authority" value={approval.authority} />
+      <button className="button" disabled={busy || account !== approval.governor} onClick={() => setCustodyAction('return')}>Return circuit</button>
       <details><summary>{approval.authorityCurrent ? 'Update reviewer policy' : 'Set reviewer policy'}</summary>
         <label className="field">Reviewer addresses<textarea value={reviewers} onChange={event => setReviewers(event.target.value)} placeholder="One address per line" /></label>
         <label className="field">Threshold<input type="number" min={1} max={31} value={threshold} onChange={event => setThreshold(Number(event.target.value))} /></label>
@@ -179,6 +192,23 @@ export function XLayerApprovals({ inspection, approval, manifest, account, conne
       {!account && <button className="button" onClick={connect}><Wallet size={16} /> Connect holder or reviewer</button>}
       <button className="button" disabled={busy || !site} onClick={() => void run(refresh)}><RefreshCw size={16} /> Refresh from X Layer</button>
     </div>
+    {custodyAction && <Modal title={custodyAction === 'enroll' ? 'Enroll this circuit?' : 'Return this circuit?'} close={() => setCustodyAction(undefined)}>
+      <div className="modal-body stack">
+        <CopyValue label="Circuit ID" value={site?.circuitId} />
+        <CopyValue label="Governing wallet" value={account} />
+        {custodyAction === 'enroll' ? <p>Enrollment transfers the circuit NFT and control of its TapeOut container into the site authority. Use a dedicated pilot circuit. General container execution becomes unavailable until you return the circuit.</p>
+          : <p>The circuit returns to the governing wallet. Its approval policy and open publication attempt become invalid.</p>}
+        <div className="actions">
+          <button className="button" onClick={() => setCustodyAction(undefined)}>Cancel</button>
+          <button className="button primary" onClick={() => {
+            const action = custodyAction;
+            setCustodyAction(undefined);
+            if (action === 'enroll') void enroll(false);
+            else void returnCircuit();
+          }}>{custodyAction === 'enroll' ? 'Continue to enrollment' : 'Continue to return'}</button>
+        </div>
+      </div>
+    </Modal>}
     {notice && <div className={`notice ${notice.error ? 'error' : ''}`} role={notice.error ? 'alert' : 'status'}>{notice.text}</div>}
   </section>;
 }

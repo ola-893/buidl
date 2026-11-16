@@ -24,6 +24,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - run: npm run build:contracts
       - name: Check CLI package installation
         run: |
           package=$(npm pack --pack-destination "$RUNNER_TEMP" --json | jq -r '.[0].filename')

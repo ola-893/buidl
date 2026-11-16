@@ -49,10 +49,16 @@ export async function xLayerCli(command: string, args: string[]) {
     const { site, holder } = inspection;
     const setup = await xLayerAuthoritySetup(inspection, rpc);
     if (holder === setup.address) throw new Error('The circuit is already enrolled.');
-    const salt = setup.registry ? '0x' : toHex(randomBytes(32));
-    console.log(JSON.stringify({ site, holder, authority: setup.address, deploy: setup.deployed ? undefined : setup.transaction,
-      enrollment: { to: site.processor, data: encodeFunctionData({ abi: circuitAbi, functionName: 'safeTransferFrom',
-        args: [holder, setup.address, BigInt(site.circuitId), salt] }) } }, null, 2));
+    if (!setup.deployed) {
+      // ERC-721 does not call a receiver on an address without code. Only offer enrollment after deployment is checked.
+      console.log(JSON.stringify({ site, holder, authority: setup.address, deploy: setup.transaction,
+        next: 'After the authority appears at a checked block, run plan-xlayer again for enrollment.' }, null, 2));
+    } else {
+      const salt = setup.registry ? '0x' : toHex(randomBytes(32));
+      console.log(JSON.stringify({ site, holder, authority: setup.address,
+        enrollment: { to: site.processor, data: encodeFunctionData({ abi: circuitAbi, functionName: 'safeTransferFrom',
+          args: [holder, setup.address, BigInt(site.circuitId), salt] }) } }, null, 2));
+    }
     return true;
   }
   if ((command === 'gate-xlayer' && args.length === 3) ||

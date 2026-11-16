@@ -46,7 +46,8 @@ async function send(account: Address, to: Address, data: Hex, value?: bigint) {
 }
 
 async function main() {
-  console.log('X Layer mainnet fork block', await forkInfo(), '· simulated transactions only');
+  const forkFromBlock = await forkInfo();
+  console.log('X Layer mainnet fork block', forkFromBlock, '· simulated transactions only');
   const [owner, first, second, third, buyer] = await wallet().getAddresses();
   assert.ok(buyer);
   const ownerAddress = getAddress(owner);
@@ -143,12 +144,19 @@ async function main() {
   const rotated = await check();
   assert.equal(rotated.approval?.policy.version, 2n);
   assert.equal(xLayerOutcome(rotated.inspection, rotated.approval), 'none');
+  assert.equal(rotated.approval?.governor, address(owner));
+  await assert.rejects(client.estimateGas({ account: buyer, to: deployment.address,
+    data: encodeFunctionData({ abi: authorityAbi, functionName: 'returnCircuit' }) }));
+  const returnReceipt = await call(deployment.address, authorityAbi, 'returnCircuit', []);
+  assert.equal(address(await client.readContract({ address: processor, abi: circuitAbi, functionName: 'ownerOf', args: [tokenId] })), address(owner));
+  assert.equal((await check()).approval, undefined);
+  console.log('The recorded depositor recovered its circuit; an unrelated wallet could not withdraw.');
 
   console.log(JSON.stringify({
-    source: 'anvil-xlayer-fork', name, site, authority: deployment.address, registry,
+    source: 'anvil-xlayer-fork', forkFromBlock, name, site, authority: deployment.address, registry,
     deployment: deployReceipt.transactionHash, enrollment: enrolled.transactionHash, approval: recorded.transactionHash,
     checked: published.inspection.block, verifiedFiles: published.inspection.files.map(file => file.path), directOperatorRejected: true, divergentWriteDetected: true,
-    ownershipExit: released.transactionHash, reenrollment: returned.transactionHash, previousApprovalInvalidated: true,
+    ownershipExit: released.transactionHash, reenrollment: returned.transactionHash, returnToDepositor: returnReceipt.transactionHash, previousApprovalInvalidated: true,
   }, null, 2));
 }
 

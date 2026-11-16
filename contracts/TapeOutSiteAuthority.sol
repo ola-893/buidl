@@ -12,6 +12,7 @@ interface ITapeBeacon {
 }
 interface ITapeCircuit {
     function ownerOf(uint256 tokenId) external view returns (address);
+    function transferFrom(address from, address to, uint256 tokenId) external;
     function safeTransferFrom(address from, address to, uint256 tokenId) external;
 }
 interface ITapeOpener {
@@ -118,15 +119,27 @@ contract TapeOutSiteAuthority is ISiteAuthority {
         return this.onERC721Received.selector;
     }
 
-    function releaseTo(address recipient) external onlyGovernor {
+    function returnCircuit() external {
+        // The depositor already controlled this circuit. Returning it must not depend on a
+        // receiver callback on that wallet, or on the approval or publishing integrations.
+        clearCustody(msg.sender);
+        ITapeCircuit(processor).transferFrom(address(this), msg.sender, circuitId);
+    }
+
+    function releaseTo(address recipient) external {
         if (recipient == address(0) || recipient == address(this) || recipient == container) revert InvalidEnrollment();
+        clearCustody(recipient);
+        ITapeCircuit(processor).safeTransferFrom(address(this), recipient, circuitId);
+    }
+
+    function clearCustody(address recipient) private {
+        if (msg.sender != governor || ITapeCircuit(processor).ownerOf(circuitId) != address(this)) revert Unauthorized();
         governor = address(0);
         ++epoch;
         publication.sequence = 0;
         publication.manifestDigest = bytes32(0);
         publication.inProgress = false;
         emit Released(recipient, epoch);
-        ITapeCircuit(processor).safeTransferFrom(address(this), recipient, circuitId);
     }
 
     function bind(string calldata name, uint256 months) external payable onlyGovernor {

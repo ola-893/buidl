@@ -17,6 +17,7 @@ export const authorityAbi = parseAbi([
   'function write(uint256 attempt, bytes callData)',
   'function finishPublication(uint256 attempt)',
   'function releaseTo(address recipient)',
+  'function returnCircuit()',
   'function bind(string name, uint256 months) payable',
 ]);
 
@@ -76,9 +77,11 @@ export async function xLayerApproval(inspection: Inspection, rpc: Rpc) {
   const { registry } = await xLayerAuthoritySetup(inspection, rpc);
   if (!registry) throw new Error('The site custody has no recognized enrollment.');
 
-  const [publicationValue] = await callsAt(rpc, block.hash, [
+  const [publicationValue, governorValue] = await callsAt(rpc, block.hash, [
     { to: expected, data: encodeFunctionData({ abi: authorityAbi, functionName: 'publication' }) },
+    { to: expected, data: encodeFunctionData({ abi: authorityAbi, functionName: 'governor' }) },
   ]);
+  const governor = address(decodeFunctionResult({ abi: authorityAbi, functionName: 'governor', data: governorValue }));
   const [attempt, sequence, digest, inProgress] = decodeFunctionResult({ abi: authorityAbi, functionName: 'publication', data: publicationValue });
   const [statusValue, saltValue, sourceValue] = await callsAt(rpc, block.hash, [
     { to: registry, data: encodeFunctionData({ abi: registryAbi, functionName: 'status', args: [siteTuple(site)] }) },
@@ -93,7 +96,7 @@ export async function xLayerApproval(inspection: Inspection, rpc: Rpc) {
   const after = await header(toHex(BigInt(block.number)), rpc);
   if (after.hash !== block.hash) throw new Error('Pinned block changed during approval verification.');
   return {
-    authority: expected, registry, instanceSalt, policy, commitment, authorityCurrent,
+    authority: expected, registry, governor, instanceSalt, policy, commitment, authorityCurrent,
     block: { hash: block.hash, number: BigInt(block.number), timestamp: BigInt(block.timestamp) },
     publication: { attempt, sequence, manifestDigest: digest, inProgress },
   };
