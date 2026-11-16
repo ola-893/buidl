@@ -3,16 +3,17 @@ import { parseArgs } from 'node:util';
 import { readBuild } from './core/build';
 import { outcomes } from './core/local';
 import { address, manifestDigest, parseManifest } from './core/manifest';
-import { parseTestnetConfig, planTestnet, requireTestnetGate, testnetOutcome, testnetSnapshot } from './core/testnet';
+import { parseTestnetConfig, planTestnet, planTestnetAuthority, requireTestnetGate, testnetOutcome, testnetSnapshot } from './core/testnet';
 
 const load = async (path: string) => JSON.parse(await readFile(path, 'utf8')) as unknown;
 export async function testnetCli(command: string, args: string[]) {
   if (command === 'plan-testnet-fixtures') {
     const { values, positionals } = parseArgs({ args, allowPositionals: true,
-      options: { 'chain-id': { type: 'string' }, out: { type: 'string' } } });
+      options: { 'chain-id': { type: 'string' }, out: { type: 'string' }, fixture: { type: 'string' } } });
     if (values['chain-id'] !== '1952') throw new Error('Explicit --chain-id 1952 is required. Mainnet is rejected.');
     if (positionals.length !== 1 || !values.out) throw new Error('Use plan-testnet-fixtures <owner> --chain-id 1952 --out <plan.json>');
-    const plan = await planTestnet(address(positionals[0]));
+    const owner = address(positionals[0]);
+    const plan = values.fixture ? await planTestnetAuthority(owner, address(values.fixture)) : await planTestnet(owner);
     await writeFile(values.out, JSON.stringify(plan, null, 2) + '\n', { flag: 'wx' });
     console.log(JSON.stringify({ kind: 'testnet-fixtures', chainId: 1952, config: plan.config,
       balanceWei: plan.balanceWei, estimatedTestTokenWei: plan.maximumAtQuotedGasPriceWei }, null, 2));

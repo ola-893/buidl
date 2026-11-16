@@ -18,7 +18,7 @@ const help = `buidl
   verify-xlayer <X Layer identifier>
   gate-xlayer <X Layer identifier> <build-dir> <manifest.json>
   publish-xlayer <X Layer identifier> <build-dir> <manifest.json> --broadcast --account <Foundry keystore alias>
-  plan-testnet-fixtures <owner> --chain-id 1952 --out <plan.json>
+  plan-testnet-fixtures <owner> --chain-id 1952 --out <plan.json> [--fixture <existing-simulated-circuit>]
   verify-testnet-fixtures <config.json>
   gate-testnet-fixtures <build-dir> <manifest.json> <config.json>`;
 

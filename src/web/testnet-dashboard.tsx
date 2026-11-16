@@ -6,7 +6,7 @@ import { address, fileEntry, manifestDigest, parseManifest, type Manifest } from
 import { outcomes } from '../core/local';
 import { storeAbi } from '../core/tapeout';
 import {
-  assertTestnet, assertTestnetRequest, beginTestnet, compareTestnet, estimateTestnet, fixtureAbi, parseTestnetConfig, planTestnet,
+  assertTestnet, assertTestnetRequest, beginTestnet, compareTestnet, estimateTestnet, fixtureAbi, parseTestnetConfig, planTestnet, planTestnetAuthority,
   requireTestnetGate, testnet, testnetAuthorityAbi, testnetClient, testnetOutcome, testnetRequest, testnetSite, testnetSnapshot,
   testnetWrite, type PlannedTx, type TestnetConfig, type TestnetSnapshot,
 } from '../core/testnet';
@@ -168,6 +168,11 @@ export function TestnetDashboard() {
   }
   async function deploymentPlan() {
     const { account } = await checkedWallet();
+    if (config && await client.getCode({ address: config.fixture })) {
+      if (await client.getCode({ address: config.authority })) throw new Error('Both contracts already exist. Refresh the fixture instead.');
+      setPlan(await planTestnetAuthority(account, config.fixture));
+      return;
+    }
     setPlan(await planTestnet(account));
   }
   async function deploy() {
@@ -175,7 +180,8 @@ export function TestnetDashboard() {
     // Persist predicted addresses so a partially completed deployment can be inspected and resumed.
     setConfig(plan.config);
     for (const tx of plan.transactions) {
-      const target = tx === plan.transactions[0] ? plan.config.fixture : plan.config.authority;
+      const target = tx.creates;
+      if (!target) throw new Error('The deployment plan is missing its predicted contract address.');
       if (await client.getCode({ address: target })) continue;
       await propose(tx, tx);
     }

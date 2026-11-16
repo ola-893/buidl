@@ -1,6 +1,6 @@
 import {
   createPublicClient, defineChain, encodeDeployData, encodeFunctionData, getContractAddress, getCreateAddress,
-  http, keccak256, parseAbi, toHex, zeroAddress, type Abi, type Address, type Hex,
+  fallback, http, keccak256, parseAbi, toHex, zeroAddress, type Abi, type Address, type Hex, type PublicClient, type Transport,
 } from 'viem';
 import { registryAbi, siteKey, siteTuple, type Evidence } from './approval';
 import { address, artifactDigest, compare, digest, manifestDigest, object, parseManifest, sameSite, type Manifest, type Site } from './manifest';
@@ -18,8 +18,9 @@ export const testnet = defineChain({
   blockExplorers: { default: { name: 'X Layer testnet explorer', url: 'https://www.okx.com/web3/explorer/xlayer-test' } },
   testnet: true,
 });
-export const testnetClient = () => createPublicClient({ chain: testnet, transport: http(TESTNET_RPCS[0], { timeout: 15_000, retryCount: 1 }) });
-export type TestnetClient = ReturnType<typeof testnetClient>;
+export type TestnetClient = PublicClient<Transport, typeof testnet>;
+export const testnetClient = (): TestnetClient => createPublicClient({ chain: testnet,
+  transport: fallback(TESTNET_RPCS.map(url => http(url, { timeout: 10_000, retryCount: 0 })), { retryCount: 0 }) });
 export const fixtureAbi = [...storeAbi, ...parseAbi([
   'function holder() view returns(address)',
   'function uploading() view returns(bool)',
@@ -36,7 +37,7 @@ export const testnetAuthorityAbi = parseAbi([
   'function write(uint256 attempt,bytes callData)', 'function finishPublication(uint256 attempt)',
 ]);
 export type TestnetConfig = { kind: 'testnet-fixtures'; chainId: 1952; fixture: Address; authority: Address };
-export type PlannedTx = { label: string; from: Address; to?: Address; data: Hex; nonce?: number; gas: string; gasPrice: string; estimatedWei: string };
+export type PlannedTx = { label: string; from: Address; to?: Address; creates?: Address; data: Hex; nonce?: number; gas: string; gasPrice: string; estimatedWei: string };
 
 export function parseTestnetConfig(value: unknown): TestnetConfig {
   const parsed = object(value, ['kind', 'chainId', 'fixture', 'authority'], 'testnet configuration');
@@ -73,9 +74,30 @@ export async function planTestnet(owner: Address, client = testnetClient()) {
   return {
     config: { kind: 'testnet-fixtures' as const, chainId: TESTNET_ID as 1952, fixture, authority },
     balanceWei: balance.toString(),
-    transactions: [{ ...first, label: 'Deploy simulated DeWEB circuit and store', nonce },
-      { ...second, label: 'Deploy test custody authority', nonce: nonce + 1 }],
+    transactions: [{ ...first, label: 'Deploy simulated DeWEB circuit and store', nonce, creates: fixture },
+      { ...second, label: 'Deploy test custody authority', nonce: nonce + 1, creates: authority }],
     maximumAtQuotedGasPriceWei: (BigInt(first.estimatedWei) + BigInt(second.estimatedWei)).toString(),
+  };
+}
+
+export async function planTestnetAuthority(owner: Address, fixture: Address, client = testnetClient()) {
+  await assertTestnet(client);
+  const block = await client.getBlockNumber();
+  const [code, holder, nonce, balance] = await Promise.all([
+    client.getCode({ address: fixture, blockNumber: block }),
+    client.readContract({ address: fixture, abi: fixtureAbi, functionName: 'holder', blockNumber: block }),
+    client.getTransactionCount({ address: owner, blockTag: 'pending' }), client.getBalance({ address: owner }),
+  ]);
+  if (!code || keccak256(code) !== fixtureArtifact.runtimeHash || address(holder) !== address(owner)) {
+    throw new Error('Resume requires a recognized simulated circuit still held by the connected deployer.');
+  }
+  const authority = address(getCreateAddress({ from: owner, nonce: BigInt(nonce) }));
+  const data = encodeDeployData({ abi: authorityArtifact.abi as Abi, bytecode: authorityArtifact.bytecode as Hex, args: [fixture] });
+  const estimate = await estimateTestnet(owner, data, undefined, client);
+  return {
+    config: { kind: 'testnet-fixtures' as const, chainId: TESTNET_ID as 1952, fixture, authority },
+    balanceWei: balance.toString(), transactions: [{ ...estimate, label: 'Deploy test custody authority', nonce, creates: authority }],
+    maximumAtQuotedGasPriceWei: estimate.estimatedWei,
   };
 }
 

@@ -46,6 +46,8 @@ npm run buidl -- gate-testnet-fixtures ./build ./manifest.json ./fixture-config.
 
 The configuration schema is `{kind:"testnet-fixtures",chainId:1952,fixture:"0x…",authority:"0x…"}`. All testnet commands reject a mainnet configuration or node. The plan command additionally requires the literal `--chain-id 1952`. The published CLI v0.3.0 predates these testnet commands. Run this checkout until a new release is published.
 
+If the dashboard reloads between deployments, reconnect the holder and select **Estimate testnet deployment** again. It recognizes the existing fixture and prepares only its missing authority. The CLI equivalent adds `--fixture <existing-simulated-circuit>` to the planning command. Resuming verifies the fixture's runtime and current holder before preparing bytecode.
+
 ## Dashboard sequence
 
 1. Review and sign the two fixture deployments. Enroll the simulated circuit with the holder wallet.
@@ -63,6 +65,8 @@ Previously approved artifacts require an explicit rollback request and fresh rev
 
 ## Current public signing state
 
-The wallet balance and network have been checked. The unsigned deployment plan was prepared before any fixture transaction. After disconnecting and reconnecting the site, the actual MetaMask contract deployment confirmation opened on chain 1952 with nonce 0. The wallet's selected RPC is the second official endpoint, `https://xlayertestrpc.okx.com/terigon`. Public deployment receipts and actual reviewer signatures are pending wallet signing. The structured [pilot status](testnet/pilot-status.json) distinguishes local results from that pending public journey.
+The actual holder deployed the simulated circuit/store at `0xe97847558dded18fc6208ce47eeec7ab73c09d9d` in [transaction 0x8491…0b03](https://www.okx.com/web3/explorer/xlayer-test/tx/0x8491f8b356c57d79358b8f5ca9379eef00742c5b04b379026e7e104371f70b03), block 46391574, paying 0.000028718941435947 test OKB. The [RPC receipt](testnet/fixture-deployment-receipt.json) is saved. The authority, enrollment and actual reviewer signatures remain pending. The structured [pilot status](testnet/pilot-status.json) distinguishes local results from the partial public journey.
+
+The wallet's selected RPC is the second official endpoint, `https://xlayertestrpc.okx.com/terigon`. The dashboard uses both official endpoints as fallbacks for unavailable reads; this is availability fallback, not independent RPC agreement.
 
 The requested public reviewer addresses are `0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E` and `0x3c25aD59862531A022c96A49c067E991441240C5`. Neither has signed a pilot approval yet.

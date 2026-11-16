@@ -6,7 +6,7 @@ import { approvalTypedData, registryAbi, signaturesFor, siteTuple } from '../src
 import { readBuild } from '../src/core/build';
 import { manifestDigest } from '../src/core/manifest';
 import {
-  assertTestnet, beginTestnet, fixtureAbi, parseTestnetConfig, planTestnet, requireTestnetGate, testnet, testnetAuthorityAbi,
+  assertTestnet, beginTestnet, fixtureAbi, parseTestnetConfig, planTestnet, planTestnetAuthority, requireTestnetGate, testnet, testnetAuthorityAbi,
   testnetOutcome, testnetRequest, testnetSite, testnetSnapshot, testnetWrite, type TestnetClient,
 } from '../src/core/testnet';
 import { storeAbi } from '../src/core/tapeout';
@@ -42,7 +42,12 @@ test('testnet fixtures exercise custody, approvals, publishing and fail-closed c
     return receipt;
   }
   const plan = await planTestnet(holder, client);
-  for (const tx of plan.transactions) await send(tx.to, tx.data, holder, tx.nonce);
+  await send(plan.transactions[0].to, plan.transactions[0].data, holder, plan.transactions[0].nonce);
+  const resumed = await planTestnetAuthority(holder, plan.config.fixture, client);
+  assert.deepEqual(resumed.config, plan.config);
+  assert.equal(resumed.transactions.length, 1);
+  await assert.rejects(planTestnetAuthority(outsider, plan.config.fixture, client), /recognized simulated circuit/);
+  await send(resumed.transactions[0].to, resumed.transactions[0].data, holder, resumed.transactions[0].nonce);
   const { config } = plan;
   assert.equal((await testnetSnapshot(config, client)).approval, undefined);
   const salt = toHex(crypto.getRandomValues(new Uint8Array(32)));

@@ -1,14 +1,14 @@
 {
   "kind": "testnet-fixture-pilot-status",
   "chainId": 1952,
-  "recordedAt": "2026-11-16T17:28:57.214Z",
+  "recordedAt": "2026-11-16T21:25:13.872Z",
   "holder": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
   "reviewers": [
     "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E",
     "0x3c25aD59862531A022c96A49c067E991441240C5"
   ],
-  "balanceWei": "200000000000000000",
-  "pendingNonce": 0,
+  "balanceWei": "199971281058564053",
+  "pendingNonce": 1,
   "block": {
     "number": "46391297",
     "hash": "0x1d5b490c1cd2d4bebc581072619b28ef97dbeb16ce8a9d06be572588a99f2387"
@@ -19,8 +19,17 @@
     "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
     "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
   },
-  "deploymentStatus": "pending-wallet-signing",
-  "publicReceipts": [],
+  "deploymentStatus": "fixture-deployed-authority-pending",
+  "publicReceipts": [
+    {
+      "role": "simulated-circuit-store",
+      "contract": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+      "transactionHash": "0x8491f8b356c57d79358b8f5ca9379eef00742c5b04b379026e7e104371f70b03",
+      "block": "46391574",
+      "status": "success",
+      "receiptFile": "fixture-deployment-receipt.json"
+    }
+  ],
   "actualReviewerSignatures": [],
   "automatedRehearsal": {
     "network": "local Anvil using chain ID 1952",
@@ -39,7 +48,8 @@
       "fresh rollback approval",
       "constructors reject mainnet",
       "dashboard refuses mainnet before and after cost review",
-      "CLI plan rejects mainnet"
+      "CLI plan rejects mainnet",
+      "reload between deployments resumes existing fixture"
     ]
   },
   "actualWallet": {
@@ -48,7 +58,7 @@
     "lastSubmissionError": 4100,
     "permissionRepair": "Disconnected only the local buidl origin and reconnected on chain 1952",
     "rpcSelected": "https://xlayertestrpc.okx.com/terigon",
-    "journey": "pending deployment signature"
+    "journey": "First fixture deployed with actual holder wallet. Authority deployment and approval journey pending."
   },
   "scope": "Simulated DeWEB/TapeOut fixtures. Not a live integration with actual TapeOut contracts.",
   "mainnetTransactionsSent": false

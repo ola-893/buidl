@@ -80,6 +80,15 @@ test('dashboard checks network and costs, collects separate signatures and verif
     await dialog.getByRole('button', { name: 'Continue in wallet' }).click();
   }
   await confirm('Deploy simulated DeWEB circuit and store');
+  await expect(page.getByRole('dialog').getByText('Deploy test custody authority', { exact: true })).toBeVisible();
+  // A refresh between deployments resumes the authority for the existing fixture.
+  await page.reload();
+  await page.getByRole('button', { name: 'Controlled testnet wallet', exact: true }).click();
+  await page.getByRole('button', { name: 'Switch to X Layer testnet' }).click();
+  await expect(page.getByText(/Wallet chain 1952/).first()).toBeVisible();
+  await page.getByRole('button', { name: 'Estimate testnet deployment' }).click();
+  await expect(page.getByText(/Estimated deployment budget/)).toBeVisible();
+  await page.getByRole('button', { name: 'Review and deploy test fixtures' }).click();
   await confirm('Deploy test custody authority');
   await expect(page.getByRole('button', { name: 'Enroll simulated circuit' })).toBeEnabled();
   expect(sent).toBe(2);
