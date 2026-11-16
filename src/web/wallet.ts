@@ -1,4 +1,5 @@
 import { createWalletClient, custom, getAddress, type Address, type EIP1193Provider } from 'viem';
+import { testnet } from '../core/testnet';
 import { foundry, xLayer } from 'viem/chains';
 
 export type Provider = { name: string; provider: EIP1193Provider };
@@ -18,6 +19,7 @@ export function watchWallets(onWallet: (wallet: Provider) => void) {
 
 export function walletClient(provider: EIP1193Provider, chainId: number, account?: Address) {
   if (!window.isSecureContext || window.top !== window.self) throw new Error('Open buidl directly in a secure, independent browser origin to use a wallet.');
-  const chain = chainId === foundry.id ? foundry : xLayer;
+  const chain = chainId === foundry.id ? foundry : chainId === 196 ? xLayer : chainId === 1952 ? testnet : undefined;
+  if (!chain) throw new Error('Unsupported wallet network.');
   return createWalletClient({ account: account && getAddress(account), chain, transport: custom(provider, { retryCount: 0 }) });
 }

@@ -32,6 +32,8 @@ Open [buidl](http://127.0.0.1:5173). The default site, `1.2.230.tape`, is read f
 
 Run the mainnet inspection in a terminal with `npm run buidl -- inspect 1.2.230.tape`. A captured result is in [live inspection evidence](docs/live-inspection.json).
 
+For the testnet-only pilot, open [the separate testnet dashboard](http://127.0.0.1:5173/?testnet=1) and follow [the testnet runbook](docs/testnet-pilot.md). It uses labeled buidl fixtures on chain 1952 because the reviewed TapeOut deployment addresses have no testnet code. Every transaction has a cost review before wallet signing, and the fixture constructors reject mainnet. The testnet commands are available from this checkout; CLI v0.3.0 predates them.
+
 ## Run the controlled release workflow
 
 Start a dedicated Anvil instance bound to loopback:

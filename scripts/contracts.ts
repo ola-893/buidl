@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import solc from 'solc';
 import { keccak256, type Abi, type Hex } from 'viem';
 
-type ContractName = 'ReleaseRegistry' | 'LocalDeweb' | 'TapeOutSiteAuthority';
+type ContractName = 'ReleaseRegistry' | 'LocalDeweb' | 'TapeOutSiteAuthority' | 'TestnetDeweb' | 'TestnetAuthority';
 
 export async function compileContracts(...names: ContractName[]) {
   const sources = Object.fromEntries(await Promise.all(names.map(async name =>

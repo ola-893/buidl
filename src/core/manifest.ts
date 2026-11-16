@@ -35,7 +35,7 @@ export function uint(value: unknown, min = 0, max = Number.MAX_SAFE_INTEGER): nu
 export function parseSite(value: unknown): Site {
   const site = object(value, ['chainId', 'processor', 'circuitId', 'container'], 'site');
   const chainId = uint(site.chainId, 1);
-  if (chainId !== 196 && chainId !== 31337) throw new Error('Unsupported site chain');
+  if (chainId !== 196 && chainId !== 31337 && chainId !== 1952) throw new Error('Unsupported site chain');
   const { circuitId } = site;
   if (typeof circuitId !== 'string' || !/^[1-9][0-9]{0,18}$/.test(circuitId) || BigInt(circuitId) > 10n ** 18n) throw new Error('Invalid circuit ID');
   return { chainId, processor: address(site.processor), circuitId, container: address(site.container) };

@@ -42,7 +42,7 @@ contract LocalDeweb {
         return (holder, epoch);
     }
 
-    function transfer(address next) external onlyHolder {
+    function transfer(address next) public virtual onlyHolder {
         if (next == address(0) || next == holder) revert Unauthorized();
         address previous = holder;
         holder = next;

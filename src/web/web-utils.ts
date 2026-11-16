@@ -5,7 +5,7 @@ export const localDemoAvailable = import.meta.env.DEV && ['127.0.0.1', 'localhos
 export const errorText = (error: unknown) => (error as { shortMessage?: string; message?: string })?.shortMessage || (error as Error)?.message || 'Operation failed.';
 
 export function download(name: string, value: unknown) {
-  const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2) + '\n'], { type: 'application/json' }));
+  const url = URL.createObjectURL(new Blob([JSON.stringify(value, (_, entry) => typeof entry === 'bigint' ? entry.toString() : entry, 2) + '\n'], { type: 'application/json' }));
   const link = document.createElement('a');
   link.href = url;
   link.download = name;

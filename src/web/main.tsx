@@ -16,6 +16,7 @@ import { contentTypeFor } from '../core/content-type';
 import { Badge, CopyValue, Diff, Inventory, Modal } from './evidence-components';
 import { download, errorText, fetchJson, localDemoAvailable, numeric, short } from './web-utils';
 import { PublicVerification, verificationLink } from './public-verification';
+import { TestnetDashboard } from './testnet-dashboard';
 import { XLayerApprovals } from './xlayer-approvals';
 import { checkXLayer, type XLayerApproval } from '../core/xlayer-release';
 import '@fontsource-variable/inter/wght.css';
@@ -431,4 +432,4 @@ function App() {
 
 const query = new URLSearchParams(location.search);
 const publicSite = query.get('verify');
-createRoot(document.getElementById('root')!).render(publicSite === null ? <App /> : <PublicVerification site={publicSite} query={query} />);
+createRoot(document.getElementById('root')!).render(query.get('testnet') === '1' ? <TestnetDashboard /> : publicSite === null ? <App /> : <PublicVerification site={publicSite} query={query} />);

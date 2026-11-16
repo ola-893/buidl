@@ -5,6 +5,7 @@ import { canonical, manifestDigest, parseManifest, parseSite } from './core/mani
 import { inspectLive } from './core/tapeout';
 import { compareLocal, inspectLocal, localState, outcomes, parseLocalConfig } from './core/local';
 import { gate, publishLocal } from './publish';
+import { testnetCli } from './cli-testnet';
 import { xLayerCli } from './cli-xlayer';
 
 const help = `buidl
@@ -16,7 +17,10 @@ const help = `buidl
   plan-xlayer <X Layer identifier>
   verify-xlayer <X Layer identifier>
   gate-xlayer <X Layer identifier> <build-dir> <manifest.json>
-  publish-xlayer <X Layer identifier> <build-dir> <manifest.json> --broadcast --account <Foundry keystore alias>`;
+  publish-xlayer <X Layer identifier> <build-dir> <manifest.json> --broadcast --account <Foundry keystore alias>
+  plan-testnet-fixtures <owner> --chain-id 1952 --out <plan.json>
+  verify-testnet-fixtures <config.json>
+  gate-testnet-fixtures <build-dir> <manifest.json> <config.json>`;
 
 const load = async (path: string) => JSON.parse(await readFile(path, 'utf8')) as unknown;
 
@@ -75,6 +79,7 @@ async function main() {
     }
     return;
   }
+  if (await testnetCli(command, args)) return;
   if (await xLayerCli(command, args)) return;
   throw new Error(help);
 }

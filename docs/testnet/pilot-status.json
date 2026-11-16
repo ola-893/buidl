@@ -1,0 +1,55 @@
+{
+  "kind": "testnet-fixture-pilot-status",
+  "chainId": 1952,
+  "recordedAt": "2026-11-16T17:28:57.214Z",
+  "holder": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
+  "reviewers": [
+    "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E",
+    "0x3c25aD59862531A022c96A49c067E991441240C5"
+  ],
+  "balanceWei": "200000000000000000",
+  "pendingNonce": 0,
+  "block": {
+    "number": "46391297",
+    "hash": "0x1d5b490c1cd2d4bebc581072619b28ef97dbeb16ce8a9d06be572588a99f2387"
+  },
+  "predictedConfig": {
+    "kind": "testnet-fixtures",
+    "chainId": 1952,
+    "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+    "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
+  },
+  "deploymentStatus": "pending-wallet-signing",
+  "publicReceipts": [],
+  "actualReviewerSignatures": [],
+  "automatedRehearsal": {
+    "network": "local Anvil using chain ID 1952",
+    "fixtures": true,
+    "actualTapeOutContracts": false,
+    "passed": [
+      "registration authority",
+      "two distinct reviewer signatures",
+      "threshold and replay rejection",
+      "approved publishing",
+      "changed files with valid SHA-256",
+      "interrupted upload recovery",
+      "revocation",
+      "ownership exit and re-enrollment invalidation",
+      "circuit recovery",
+      "fresh rollback approval",
+      "constructors reject mainnet",
+      "dashboard refuses mainnet before and after cost review",
+      "CLI plan rejects mainnet"
+    ]
+  },
+  "actualWallet": {
+    "chainId": 1952,
+    "initialChainId": 11155111,
+    "lastSubmissionError": 4100,
+    "permissionRepair": "Disconnected only the local buidl origin and reconnected on chain 1952",
+    "rpcSelected": "https://xlayertestrpc.okx.com/terigon",
+    "journey": "pending deployment signature"
+  },
+  "scope": "Simulated DeWEB/TapeOut fixtures. Not a live integration with actual TapeOut contracts.",
+  "mainnetTransactionsSent": false
+}

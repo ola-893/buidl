@@ -30,7 +30,7 @@ export type FileResult = {
 };
 
 export type Inspection = {
-  source: 'live' | 'local' | 'fork';
+  source: 'live' | 'local' | 'fork' | 'testnet-fixture';
   name: string;
   block?: { number: string; hash: Hex; timestamp?: string };
   site?: Site;

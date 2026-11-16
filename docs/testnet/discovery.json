@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-11-16T15:29:27.860Z",
+  "wallet": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
+  "reports": [
+    {
+      "url": "https://testrpc.xlayer.tech/terigon",
+      "chain": 1952,
+      "head": "0x2c3c3fd",
+      "block": "46384123",
+      "hash": "0x13b131871f6afa736b8f006b764665b45ae8bad57f4a2269f34ba81c42284a69",
+      "balanceWei": "200000000000000000",
+      "codes": {
+        "factory": {
+          "address": "0x1f09daefa827f02cbb40967cc91b259763760761",
+          "code": "0x"
+        },
+        "opener": {
+          "address": "0x536add8f30f03b69f6fbf29d425a816a0dc50106",
+          "code": "0x"
+        },
+        "siteRegistry": {
+          "address": "0xd6efb7adcc9c83dc4924ad56f6a8e4e969b9adb6",
+          "code": "0x"
+        },
+        "domainBinding": {
+          "address": "0x68809fd2fb343aa57d0aeb7f33defe477c9666f9",
+          "code": "0x"
+        }
+      }
+    },
+    {
+      "url": "https://xlayertestrpc.okx.com/terigon",
+      "chain": 1952,
+      "head": "0x2c3c3fd",
+      "block": "46384123",
+      "hash": "0x13b131871f6afa736b8f006b764665b45ae8bad57f4a2269f34ba81c42284a69",
+      "balanceWei": "200000000000000000",
+      "codes": {
+        "factory": {
+          "address": "0x1f09daefa827f02cbb40967cc91b259763760761",
+          "code": "0x"
+        },
+        "opener": {
+          "address": "0x536add8f30f03b69f6fbf29d425a816a0dc50106",
+          "code": "0x"
+        },
+        "siteRegistry": {
+          "address": "0xd6efb7adcc9c83dc4924ad56f6a8e4e969b9adb6",
+          "code": "0x"
+        },
+        "domainBinding": {
+          "address": "0x68809fd2fb343aa57d0aeb7f33defe477c9666f9",
+          "code": "0x"
+        }
+      }
+    }
+  ]
+}
