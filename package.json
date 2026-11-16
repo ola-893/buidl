@@ -20,6 +20,7 @@
     "test:xlayer-fork": "tsx scripts/xlayer-fork.ts",
     "build:testnet": "tsx scripts/build-testnet.ts",
     "check:testnet": "tsx scripts/build-testnet.ts --check",
+    "testnet:relay": "tsx scripts/testnet-relay.ts",
     "test:testnet": "tsx --test tests/testnet.integration.ts"
   },
   "devDependencies": {

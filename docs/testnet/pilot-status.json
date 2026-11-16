@@ -1,7 +1,7 @@
 {
   "kind": "testnet-fixture-pilot-status",
   "chainId": 1952,
-  "recordedAt": "2026-11-16T21:25:13.872Z",
+  "recordedAt": "2026-11-16T22:01:05.042Z",
   "holder": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
   "reviewers": [
     "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E",
@@ -49,18 +49,26 @@
       "constructors reject mainnet",
       "dashboard refuses mainnet before and after cost review",
       "CLI plan rejects mainnet",
-      "reload between deployments resumes existing fixture"
+      "reload between deployments resumes existing fixture",
+      "testnet relay rejects signed mainnet and unauthorized accounts before broadcast"
     ]
   },
   "actualWallet": {
     "chainId": 1952,
     "initialChainId": 11155111,
-    "lastSubmissionError": -32002,
+    "lastSubmissionError": -32603,
     "permissionRepair": "Disconnected only the local buidl origin and reconnected on chain 1952",
     "rpcSelected": "https://testrpc.xlayer.tech",
-    "journey": "First fixture deployed with actual holder wallet. Authority deployment and approval journey pending.",
-    "latestFailure": "MetaMask RPC gas-price circuit breaker; authority not submitted"
+    "journey": "First fixture deployed. Authority, enrollment, reviewer signatures and public lifecycle still pending.",
+    "latestFailure": "Holder confirmed the authority transaction, but MetaMask failed eth_sendRawTransaction. Fresh pending nonce remains 1 and authority code is absent."
   },
   "scope": "Simulated DeWEB/TapeOut fixtures. Not a live integration with actual TapeOut contracts.",
-  "mainnetTransactionsSent": false
+  "mainnetTransactionsSent": false,
+  "resume": {
+    "localDashboard": "http://127.0.0.1:5173/?testnet=1",
+    "rpcRelay": "http://127.0.0.1:8552",
+    "relayNetwork": "Actual public X Layer testnet 1952; not Anvil",
+    "desktop": "Locked before MetaMask relay configuration",
+    "next": "Unlock Chrome, configure the existing testnet network to use the relay, then review and sign the authority at nonce 1."
+  }
 }

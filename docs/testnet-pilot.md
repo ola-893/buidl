@@ -34,6 +34,8 @@ npm run test:testnet
 npm run dev
 ```
 
+For actual wallet signing, a production preview avoids development reloads: run `npm run build`, then `npm run preview -- --port 5173 --strictPort` after stopping the dev server.
+
 Open `http://127.0.0.1:5173/?testnet=1`, connect the holder, and select X Layer testnet. The dashboard estimates both deployments and displays a test OKB budget. The initial [unsigned plan](testnet/deployment-plan.json) includes the testnet-only creation bytecode and estimated gas. Refresh the estimate if the account nonce or gas price changes.
 
 The CLI supports unsigned deployment planning, fresh verification and a build gate:
@@ -70,5 +72,18 @@ The actual holder deployed the simulated circuit/store at `0xe97847558dded18fc62
 MetaMask subsequently reported unavailable gas-price RPC reads (`-32002`) before the authority could be submitted. Its selected endpoint is now `https://testrpc.xlayer.tech`, listed in the [Ethereum chain registry](https://github.com/ethereum-lists/chains/blob/master/_data/chains/eip155-1952.json); chain ID 1952, the deployed fixture runtime and a gas-price read were independently checked there. The [unsigned authority plan](testnet/authority-deployment-plan.json) resumes at nonce 1. The dashboard supplies the reviewed gas price and checks the pending nonce immediately before opening the wallet.
 
 The dashboard uses both documented `/terigon` endpoints as fallbacks for unavailable reads; this is availability fallback, not independent RPC agreement. The production build is served at the same local origin for the remaining signing steps.
+
+If MetaMask cannot directly reach the public RPC, the optional loopback relay forwards its requests through curl. It never signs transactions. Start it with explicit chain and public signer addresses:
+
+```sh
+npm run testnet:relay -- --chain-id 1952 \
+  --wallet 0xe26468ae02368a75DBDBea58F367B7313942ad26 \
+  --wallet 0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E \
+  --wallet 0x3c25aD59862531A022c96A49c067E991441240C5
+```
+
+Select `http://127.0.0.1:8552` as a custom RPC for the existing X Layer testnet network, chain 1952. This forwards to the public X Layer testnet and is distinct from local Anvil. The relay rejects unsigned sends, signed transactions for other chains, unknown signer addresses, and an upstream reporting the wrong chain. Wallet confirmation is still required for each transaction.
+
+The holder confirmed the authority transaction in MetaMask, but its direct RPC failed during `eth_sendRawTransaction` (`-32603`). Fresh reads still returned pending nonce 1 and no authority code. The Mac then locked before MetaMask could be switched to the tested relay. Unlocking Chrome and configuring the relay remain necessary before continuing the public signing journey.
 
 The requested public reviewer addresses are `0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E` and `0x3c25aD59862531A022c96A49c067E991441240C5`. Neither has signed a pilot approval yet.

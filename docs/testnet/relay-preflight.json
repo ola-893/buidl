@@ -1,0 +1,25 @@
+{
+  "kind": "public-testnet-relay-preflight",
+  "checkedAt": "2026-11-16T22:01:05.043Z",
+  "chainId": 1952,
+  "rpc": "http://127.0.0.1:8552",
+  "upstream": "public X Layer testnet",
+  "anvil": false,
+  "results": [
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": "0x7a0"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": "0x1"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": "0x"
+    }
+  ]
+}
