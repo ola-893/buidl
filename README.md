@@ -2,7 +2,7 @@
 
 Does this deployed DeWEB app match the exact release approved by the team?
 
-buidl verifies X Layer DeWEB bytes against TapeOut and compares complete deployments with independently approved manifests. The registry and gated publishing workflow run on Anvil. The X Layer mainnet inspector uses live public RPC reads. Approval establishes an artifact match. Security reviews and source-to-build reproducibility are separate claims.
+buidl verifies X Layer DeWEB bytes against TapeOut and compares complete deployments with independently approved manifests. The local demo uses Anvil. The X Layer pilot uses the native TapeOut contracts and a site-specific authority, with a full rehearsal on an Anvil fork. Approval establishes an artifact match. Security reviews and source-to-build reproducibility are separate claims.
 
 ## Use buidl
 
@@ -17,7 +17,7 @@ buidl inspect 1.2.230.tape
 
 You can also download the versioned `.tgz` from the GitHub release and run `npm install -g ./buidl-0.2.0.tgz`. To build the package yourself, run `npm ci` and `npm pack` from the checkout. The CLI is distributed through this repository and its GitHub releases.
 
-Public links perform fresh reads when opened, recheck while open, and display the checked block and UTC check time. A live X Layer link reports content integrity and the absence of a configured approval registry. A loopback demo link checks the actual Anvil registry and shows its reviewer evidence and match status. It is scoped to that particular local registry instance and, when available, its current release digest.
+Public links perform fresh reads when opened, recheck while open, and display the checked block and UTC check time. A live X Layer link reports content integrity and checks current approval when the site is enrolled in a recognized authority. A loopback demo link checks the actual Anvil registry and shows its reviewer evidence and match status. It is scoped to that particular local registry instance and, when available, its current release digest.
 
 ## Run locally
 
@@ -84,7 +84,7 @@ The browser suite expects the disposable Anvil service running. It deploys its o
 
 The supported publisher gates staged bytes before upload and verifies the staged deployment before ending the upload. Direct holder writes can bypass the publisher. A fresh post-deployment read detects divergence. Viewer-side blocking requires a viewer that integrates and enforces the result. For loopback recovery, rerun the gated publisher after the interrupted process exits. After a hard kill, remove the matching empty `.demo/publish-<container>.lock` directory once the old publisher is gone.
 
-The hosted frontend uses GitHub Pages as its independent HTTPS origin. Mainnet inspection is read-only. Operating a live approval registry requires a TapeOut authority source that can detect transfer epochs and a configured registry deployment. The [integration map](docs/integrations.md) records the verified contracts, provider constraints, and hosting options.
+The hosted frontend uses GitHub Pages as its independent HTTPS origin. The [X Layer release pilot](docs/xlayer-release.md) describes the fork rehearsal and team-signed mainnet steps. Existing public sites remain inspectable, and live approval evidence requires explicit site enrollment. The [integration map](docs/integrations.md) records the verified contracts, provider constraints, and hosting options.
 
 ## Commercial use and roadmap
 
