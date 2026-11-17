@@ -32,6 +32,9 @@ export async function publishTestnet(
   if (!resuming) await send({ ...beginTestnet(config, first), label: 'Begin approved testnet publication' });
   const attempt = resuming ? first.attempt : first.attempt + 1n;
   for (const { file, bytes } of files) {
+    const existing = first.inspection.files.find(entry => entry.path === file.path);
+    if (resuming && existing?.status === 'verified' && existing.sha256 === file.sha256 &&
+        existing.bytes === file.bytes && existing.type === file.type) continue;
     const chunks = Math.max(1, Math.ceil(bytes.length / 12_000));
     for (let index = 0; index < chunks; index++) {
       const part = bytes.subarray(index * 12_000, (index + 1) * 12_000);
@@ -47,7 +50,7 @@ export async function publishTestnet(
     if (!paths.has(file.path)) await send({ ...testnetWrite(config, attempt,
       encodeFunctionData({ abi: storeAbi, functionName: 'removeFile', args: [config.fixture, file.path] })), label: `Remove ${file.path}` });
   }
-  await send({ ...testnetWrite(config, attempt, encodeFunctionData({ abi: storeAbi, functionName: 'setFallback',
+  if (!resuming || first.inspection.fallback !== staged.manifest.routing.fallback) await send({ ...testnetWrite(config, attempt, encodeFunctionData({ abi: storeAbi, functionName: 'setFallback',
     args: [config.fixture, staged.manifest.routing.fallback] })), label: 'Set testnet fallback route' });
   const stagedSnapshot = await testnetSnapshot(config, client);
   requireTestnetGate(staged.manifest, config, stagedSnapshot);

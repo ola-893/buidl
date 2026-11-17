@@ -1,0 +1,113 @@
+{
+  "kind": "public-testnet-fixture-snapshot",
+  "chainId": 1952,
+  "checkedAt": "2026-11-17T10:08:46.038Z",
+  "config": {
+    "kind": "testnet-fixtures",
+    "chainId": 1952,
+    "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+    "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
+  },
+  "outcome": "unavailable",
+  "snapshot": {
+    "inspection": {
+      "source": "testnet-fixture",
+      "name": "Simulated testnet checkout",
+      "status": "partial",
+      "detail": "Deployment is in progress.",
+      "files": [
+        {
+          "path": "index.html",
+          "bytes": 761,
+          "type": "text/html",
+          "declared": "0x01a5da05e10877d9af6f146c559b9530d337a7daa3d29cf635c55b03d57e6d43",
+          "status": "verified",
+          "sha256": "0x01a5da05e10877d9af6f146c559b9530d337a7daa3d29cf635c55b03d57e6d43"
+        }
+      ],
+      "site": {
+        "chainId": 1952,
+        "processor": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+        "circuitId": "1",
+        "container": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d"
+      },
+      "registry": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+      "holder": "0xE047120881026327aF28E74a6EA0C046Edd01568",
+      "activation": "local",
+      "block": {
+        "number": "46451283",
+        "hash": "0xf810cb1f2029a2b349bdfbfd51a61af6fe6608646123a11111b54391cccff001",
+        "timestamp": "1794910120"
+      },
+      "fallback": ""
+    },
+    "approval": {
+      "block": {
+        "baseFeePerGas": "20000000",
+        "blobGasUsed": "0",
+        "difficulty": "0",
+        "excessBlobGas": "0",
+        "extraData": "0x0100000032000000010000000001312d00",
+        "gasLimit": "210000000",
+        "gasUsed": "46074",
+        "hash": "0xf810cb1f2029a2b349bdfbfd51a61af6fe6608646123a11111b54391cccff001",
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "miner": "0x4200000000000000000000000000000000000011",
+        "mixHash": "0x1cc8b18fa4712e29bb8f063a2a6ca6e3fc6793c74dba5437b9f54222c07e2523",
+        "nonce": "0x0000000000000000",
+        "number": "46451283",
+        "parentBeaconBlockRoot": "0x4e211a9d006f7280f46b4d2a553892b90a839d2d05e2217d7ae342923dff41f9",
+        "parentHash": "0xcec4e8727c3fbe9a12fc95a3438c53a4f5df6f3d4d4b8a50aa0ac091a3e6ab45",
+        "receiptsRoot": "0x3771e44e24b3fc9f946d73062ffb316e2c99eda8a8014c8e19b865babe114a94",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "size": "910",
+        "stateRoot": "0xc45c037aa6e15d9ad20b75e9c21dcbb7acc4464bacdb39106a4136bb397edd43",
+        "timestamp": "1794910120",
+        "transactions": [
+          "0x97240bcb7b341e4f1b93e7589d0fd3f46d7d077bf095227d5828a424ea68da8a"
+        ],
+        "transactionsRoot": "0x1f9d770550cf0fb4653752cd1e3569771cc312174799c95f8d5fab2d181c8ae7",
+        "uncles": [],
+        "withdrawals": [],
+        "withdrawalsRoot": "0x8ed4baae3a927be3dea54996b4d5899f8c01e7594bf50b17dc1e741388ce3d12",
+        "totalDifficulty": null
+      },
+      "policy": {
+        "holder": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
+        "epoch": "1",
+        "version": "1",
+        "threshold": "2",
+        "reviewers": [
+          "0x3c25aD59862531A022c96A49c067E991441240C5",
+          "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
+        ]
+      },
+      "commitment": {
+        "approval": {
+          "siteKey": "0xad056115888613a3dbd2407b059aa3dacc01423ac21589db2ebf9bed9dc4a5b7",
+          "policyVersion": "1",
+          "sequence": "1",
+          "expiry": "1794992571",
+          "schemaVersion": "1",
+          "manifestDigest": "0x3009cf76be7286a25b885493959403d05e27c5612467ef3058cf96a61da36524",
+          "artifactDigest": "0xdf9789499293731f04a4d702c4ffbc462e77317ff3f37a36326386c5a09fe206",
+          "rollback": false
+        },
+        "revoked": false,
+        "signers": [
+          "0x3c25aD59862531A022c96A49c067E991441240C5",
+          "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
+        ]
+      },
+      "authorityCurrent": true,
+      "instanceSalt": "0xee4445ea93d1b4a8c81489d8df5cf62177442456f4fa37c64fe9aaa3ee53a00d"
+    },
+    "registry": "0xd52A10A333D316189e87076f2c600C4De5FE08d6",
+    "governor": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
+    "attempt": "1",
+    "inProgress": true,
+    "sequence": "1",
+    "publicationDigest": "0x3009cf76be7286a25b885493959403d05e27c5612467ef3058cf96a61da36524"
+  }
+}

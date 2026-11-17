@@ -1,0 +1,145 @@
+{
+  "kind": "public-testnet-fixture-snapshot",
+  "chainId": 1952,
+  "checkedAt": "2026-11-17T10:25:15.653Z",
+  "config": {
+    "kind": "testnet-fixtures",
+    "chainId": 1952,
+    "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+    "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
+  },
+  "outcome": "match",
+  "snapshot": {
+    "inspection": {
+      "source": "testnet-fixture",
+      "name": "Simulated testnet checkout",
+      "status": "complete",
+      "files": [
+        {
+          "path": "index.html",
+          "bytes": 761,
+          "type": "text/html",
+          "declared": "0x01a5da05e10877d9af6f146c559b9530d337a7daa3d29cf635c55b03d57e6d43",
+          "status": "verified",
+          "sha256": "0x01a5da05e10877d9af6f146c559b9530d337a7daa3d29cf635c55b03d57e6d43"
+        },
+        {
+          "path": "payment.json",
+          "bytes": 61,
+          "type": "application/json",
+          "declared": "0x11f6ac91c008bd4844d0ccd5f8a336f98b0ec90cd5ef8023b5003cc2d54fab61",
+          "status": "verified",
+          "sha256": "0x11f6ac91c008bd4844d0ccd5f8a336f98b0ec90cd5ef8023b5003cc2d54fab61"
+        }
+      ],
+      "site": {
+        "chainId": 1952,
+        "processor": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+        "circuitId": "1",
+        "container": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d"
+      },
+      "registry": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+      "holder": "0xE047120881026327aF28E74a6EA0C046Edd01568",
+      "activation": "local",
+      "block": {
+        "number": "46452274",
+        "hash": "0x92d7a2eeea3830982c8abce51014576bdf5d1fd2d958f1b4ed9a2e419b9ab48f",
+        "timestamp": "1794911111"
+      },
+      "fallback": "index.html",
+      "artifacts": {
+        "site": {
+          "chainId": 1952,
+          "processor": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+          "circuitId": "1",
+          "container": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d"
+        },
+        "routing": {
+          "fallback": "index.html"
+        },
+        "files": [
+          {
+            "path": "index.html",
+            "bytes": 761,
+            "type": "text/html",
+            "sha256": "0x01a5da05e10877d9af6f146c559b9530d337a7daa3d29cf635c55b03d57e6d43"
+          },
+          {
+            "path": "payment.json",
+            "bytes": 61,
+            "type": "application/json",
+            "sha256": "0x11f6ac91c008bd4844d0ccd5f8a336f98b0ec90cd5ef8023b5003cc2d54fab61"
+          }
+        ]
+      }
+    },
+    "approval": {
+      "block": {
+        "baseFeePerGas": "20000000",
+        "blobGasUsed": "0",
+        "difficulty": "0",
+        "excessBlobGas": "0",
+        "extraData": "0x0100000032000000010000000001312d00",
+        "gasLimit": "210000000",
+        "gasUsed": "46062",
+        "hash": "0x92d7a2eeea3830982c8abce51014576bdf5d1fd2d958f1b4ed9a2e419b9ab48f",
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "miner": "0x4200000000000000000000000000000000000011",
+        "mixHash": "0x283433650302c5b04cde19b8606d4d683c2e76cc74b514ac7666558fc771c3d9",
+        "nonce": "0x0000000000000000",
+        "number": "46452274",
+        "parentBeaconBlockRoot": "0x83ea47c3b4f052545efd0ad38201756d6826db4a49bfa4887aee145e2b0750a7",
+        "parentHash": "0xc4c7ea9d2b841264d83e6244fa7a82a9869c2a248be855bd230ea3828400f5a7",
+        "receiptsRoot": "0x0e912cef68230bd11fa2437a568b0b4f3f671558a218a7490a46756affa74d9e",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "size": "910",
+        "stateRoot": "0x80eefd43775211b34ddec86396fad371e1efc5e2cbaff5c98113806949ef7d7b",
+        "timestamp": "1794911111",
+        "transactions": [
+          "0xddc3f3cd99cbdc1ec69638b7df2c663cfddc1f1516719dd570e10974e6d021a6"
+        ],
+        "transactionsRoot": "0x7cf483ddf921aaa691fa1a6bb21de580c8bab1fba332c2a52787710b688a9da1",
+        "uncles": [],
+        "withdrawals": [],
+        "withdrawalsRoot": "0x8ed4baae3a927be3dea54996b4d5899f8c01e7594bf50b17dc1e741388ce3d12",
+        "totalDifficulty": null
+      },
+      "policy": {
+        "holder": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
+        "epoch": "1",
+        "version": "1",
+        "threshold": "2",
+        "reviewers": [
+          "0x3c25aD59862531A022c96A49c067E991441240C5",
+          "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
+        ]
+      },
+      "commitment": {
+        "approval": {
+          "siteKey": "0xad056115888613a3dbd2407b059aa3dacc01423ac21589db2ebf9bed9dc4a5b7",
+          "policyVersion": "1",
+          "sequence": "1",
+          "expiry": "1794992571",
+          "schemaVersion": "1",
+          "manifestDigest": "0x3009cf76be7286a25b885493959403d05e27c5612467ef3058cf96a61da36524",
+          "artifactDigest": "0xdf9789499293731f04a4d702c4ffbc462e77317ff3f37a36326386c5a09fe206",
+          "rollback": false
+        },
+        "revoked": false,
+        "signers": [
+          "0x3c25aD59862531A022c96A49c067E991441240C5",
+          "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
+        ]
+      },
+      "authorityCurrent": true,
+      "instanceSalt": "0xee4445ea93d1b4a8c81489d8df5cf62177442456f4fa37c64fe9aaa3ee53a00d"
+    },
+    "registry": "0xd52A10A333D316189e87076f2c600C4De5FE08d6",
+    "governor": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
+    "attempt": "1",
+    "inProgress": false,
+    "sequence": "1",
+    "publicationDigest": "0x3009cf76be7286a25b885493959403d05e27c5612467ef3058cf96a61da36524"
+  }
+}

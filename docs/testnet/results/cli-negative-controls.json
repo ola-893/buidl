@@ -1,0 +1,68 @@
+{
+  "kind": "public-testnet-fixture-cli-negative-controls",
+  "chainId": 1952,
+  "checkedAt": "2026-11-17T10:28:54.429Z",
+  "transactionsSent": 0,
+  "scope": "Read current public testnet fixture state; reject invalid CLI actions before signing. No deployed-file mutation, revocation or ownership transfer was sent.",
+  "checks": [
+    {
+      "label": "Changed build is blocked before publishing",
+      "command": [
+        "buidl",
+        "testnet",
+        "gate",
+        "demo/release-b",
+        "docs/testnet/manifest-a.json",
+        "--project",
+        ".demo/cli-public/buidl.json",
+        "--json"
+      ],
+      "exitCode": 1,
+      "stderr": "{\"error\":\"Build differs from the approved manifest. Publishing blocked.\"}",
+      "walletRequestOpened": false,
+      "transactionsSent": 0,
+      "passed": true
+    },
+    {
+      "label": "Reviewer cannot act as the publishing governor",
+      "command": [
+        "buidl",
+        "testnet",
+        "publish",
+        "demo/release-a",
+        "docs/testnet/manifest-a.json",
+        "--from",
+        "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E",
+        "--broadcast",
+        "--wallet",
+        "--project",
+        ".demo/cli-public/buidl.json",
+        "--json"
+      ],
+      "exitCode": 1,
+      "stderr": "{\"error\":\"Publishing requires the enrolled circuit governor.\"}",
+      "walletRequestOpened": false,
+      "transactionsSent": 0,
+      "passed": true
+    },
+    {
+      "label": "Recorded release request cannot be replayed",
+      "command": [
+        "buidl",
+        "testnet",
+        "approve",
+        "docs/testnet/signed-release-1.json",
+        "--broadcast",
+        "--wallet",
+        "--project",
+        ".demo/cli-public/buidl.json",
+        "--json"
+      ],
+      "exitCode": 1,
+      "stderr": "{\"error\":\"Wrong site, network or stale testnet approval request.\"}",
+      "walletRequestOpened": false,
+      "transactionsSent": 0,
+      "passed": true
+    }
+  ]
+}

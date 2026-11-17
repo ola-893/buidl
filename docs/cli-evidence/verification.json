@@ -1,7 +1,7 @@
 {
   "kind": "buidl-cli-distribution-verification",
   "version": "0.4.0",
-  "checkedAt": "2026-11-17T09:53:25.543Z",
+  "checkedAt": "2026-11-17T10:29:20.908Z",
   "publicRelease": false,
   "reference": "https://github.com/ola-893/Remora/tree/codex/near-hackathon/packages/cli",
   "cleanInstall": {
@@ -10,9 +10,9 @@
     "versionOutput": "0.4.0",
     "package": {
       "filename": "buidl-0.4.0.tgz",
-      "bytes": 236616,
-      "integrity": "sha512-Th1qZi5jwQFua77t4woWmEd+9e+wYOQIrxIRizgaUDoDUGtGlzEordbpA7nSXQHn0bcWz5GDiRWuxDyP78Jwtg==",
-      "sha256": "4e19635e3feed2dcc5655ad547498ca9c2b1eebe3c0f9241d14b1756b0269c35"
+      "bytes": 237239,
+      "integrity": "sha512-BFdxCFPp51B+rNDtSPTI+5EwIemQzK+99/U/4WK7ZdZHXLTt701zjmIaWFO1CRelzoOPp9nFnL8fL210NP0cAg==",
+      "sha256": "7ba3456f38d2126ac467da1f7af266da878c4a8428b3e27b30488bb90619b1bd"
     }
   },
   "demo": {
@@ -50,40 +50,40 @@
       {
         "check": "Interrupted publishing resumes the existing attempt",
         "passed": true,
-        "block": "15"
+        "block": "12"
       },
       {
         "check": "Changed payment detected despite valid onchain file hashes",
         "passed": true,
-        "block": "18"
+        "block": "15"
       },
       {
         "check": "Revocation invalidates approval",
         "passed": true,
-        "block": "19"
+        "block": "16"
       },
       {
         "check": "Depositor recovers circuit; ownership exit invalidates policy",
         "passed": true,
-        "block": "20"
+        "block": "17"
       },
       {
         "check": "New owner enrollment cannot reuse prior approval",
         "passed": true,
-        "block": "22"
+        "block": "19"
       },
       {
         "check": "Prior owner signatures rejected after ownership change",
         "passed": true,
-        "block": "22"
+        "block": "19"
       },
       {
         "check": "New owner recovers circuit",
         "passed": true,
-        "block": "23"
+        "block": "20"
       }
     ],
-    "receiptCount": 23
+    "receiptCount": 20
   },
   "checks": {
     "build": "passed",
@@ -97,8 +97,11 @@
   },
   "actualPublicTestnet": {
     "chainId": 1952,
-    "source": "buidl test fixtures; not actual TapeOut contracts",
-    "state": "Release 1 approved by actual reviewers; attempt 1 incomplete; CLI wallet review prepared at holder nonce 6",
-    "evidence": "../testnet/pilot-status.json"
+    "source": "buidl fixtures; not actual TapeOut contracts",
+    "state": "Approval, CLI publishing and fresh approved-match verification completed with actual wallet signing",
+    "evidence": "../testnet/results/cli-approved-release.json",
+    "finalTransaction": "0x2aa40ef20a4b93ab2b4cad85bfcb1d3bcddef574cfd8356caa04c0b29c824db9",
+    "checkedBlock": "46452266",
+    "adverseCases": "Local test coverage for deployed-file mutation, revocation, ownership change and recovery; these public testnet transactions were not sent."
   }
 }

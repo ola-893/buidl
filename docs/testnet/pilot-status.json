@@ -1,17 +1,17 @@
 {
   "kind": "testnet-fixture-pilot-status",
   "chainId": 1952,
-  "recordedAt": "2026-11-17T09:31:38.983Z",
+  "recordedAt": "2026-11-17T10:25:09.646Z",
   "holder": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
   "reviewers": [
     "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E",
     "0x3c25aD59862531A022c96A49c067E991441240C5"
   ],
-  "balanceWei": "199894902054745103",
-  "pendingNonce": 6,
+  "balanceWei": "199868542733427137",
+  "pendingNonce": 10,
   "block": {
-    "number": "46448512",
-    "hash": "0xffcaca8aa0d3a606654dac0ee3b668370f9790773ec4db4885961d6fd0267b78"
+    "number": "46452176",
+    "hash": "0x6d937902b7bf7a2d7d3ad42741a92986dd3f49df8605a50ec2dee1ed0f95c13a"
   },
   "predictedConfig": {
     "kind": "testnet-fixtures",
@@ -19,7 +19,7 @@
     "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
     "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
   },
-  "deploymentStatus": "approved-publication-incomplete-cli-resume-prepared",
+  "deploymentStatus": "approved-release-published-and-freshly-verified",
   "publicReceipts": [
     {
       "role": "simulated-circuit-store",
@@ -73,6 +73,42 @@
       "status": "success",
       "paidWei": "4078540203927",
       "receiptFile": "receipts/release-1-publication-start.json"
+    },
+    {
+      "role": "cli-index-upload",
+      "transactionHash": "0xe2330815f491c4e1187fc3ba706aa4a19bcd2f89d00c651fe3f2799a63af2b09",
+      "contract": "0xe047120881026327af28e74a6ea0c046edd01568",
+      "block": "46451216",
+      "status": "success",
+      "paidWei": "16096780804839",
+      "receiptFile": "receipts/cli-index-upload.json"
+    },
+    {
+      "role": "cli-payment-upload",
+      "transactionHash": "0x9cce92c76e2baf18d32b0811853dd5fed1f6673309a48eaf6aa145037150da63",
+      "contract": "0xe047120881026327af28e74a6ea0c046edd01568",
+      "block": "46451430",
+      "status": "success",
+      "paidWei": "5766180288309",
+      "receiptFile": "receipts/cli-payment-upload.json"
+    },
+    {
+      "role": "cli-fallback-route",
+      "transactionHash": "0xdb125224a239c7dcac66eeab45acf6a3aee43389ece265c194217668072eb09a",
+      "contract": "0xe047120881026327af28e74a6ea0c046edd01568",
+      "block": "46451741",
+      "status": "success",
+      "paidWei": "2508300125415",
+      "receiptFile": "receipts/cli-fallback-route.json"
+    },
+    {
+      "role": "cli-publication-finish",
+      "transactionHash": "0x2aa40ef20a4b93ab2b4cad85bfcb1d3bcddef574cfd8356caa04c0b29c824db9",
+      "contract": "0xe047120881026327af28e74a6ea0c046edd01568",
+      "block": "46452176",
+      "status": "success",
+      "paidWei": "1988060099403",
+      "receiptFile": "receipts/cli-publication-finish.json"
     }
   ],
   "actualReviewerSignatures": [
@@ -119,7 +155,7 @@
     "lastSubmissionError": -32603,
     "permissionRepair": "Disconnected only the local buidl origin and reconnected on chain 1952",
     "rpcSelected": "http://127.0.0.1:8552",
-    "journey": "Fixture deployment, enrollment, reviewer policy and release 1 approval are confirmed on public testnet. Both actual reviewers signed. Publication attempt 1 began; the CLI is resuming from the first file upload.",
+    "journey": "Two actual reviewer wallets signed release 1. Approval, CLI publishing, interrupted-session reconciliation and final fresh verification succeeded on public X Layer testnet 1952 using labeled fixtures.",
     "resolvedRpcFailure": "Earlier direct RPC broadcast failed; local guarded relay subsequently broadcast authority, enrollment and policy successfully to public testnet."
   },
   "scope": "Simulated DeWEB/TapeOut fixtures. Not a live integration with actual TapeOut contracts.",
@@ -129,8 +165,8 @@
     "rpcRelay": "http://127.0.0.1:8552",
     "relayNetwork": "Actual public X Layer testnet 1952; not Anvil",
     "desktop": "Unlocked; Chrome and MetaMask available",
-    "next": "Review the CLI index.html transaction at holder nonce 6; remaining publishing steps are individually costed and signed.",
-    "surface": "buidl CLI primary; temporary browser page for wallet signing"
+    "next": "Read-only verification or demo recording; no pending wallet transaction.",
+    "surface": "buidl CLI; stable loopback wallet origin 127.0.0.1:5362"
   },
   "deployedConfig": {
     "kind": "testnet-fixtures",
@@ -139,7 +175,7 @@
     "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
   },
   "registry": "0xd52A10A333D316189e87076f2c600C4De5FE08d6",
-  "currentSnapshotFile": "results/interrupted-at-cli-handoff.json",
+  "currentSnapshotFile": "results/cli-approved-release-snapshot.json",
   "publicChecks": [
     {
       "label": "enrollment",
@@ -212,6 +248,67 @@
         "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
       ],
       "resultFile": "results/interrupted-at-cli-handoff.json"
+    },
+    {
+      "label": "cli-index-upload-confirmed",
+      "checkedAt": "2026-11-17T10:08:46.038Z",
+      "block": {
+        "number": "46451283",
+        "hash": "0xf810cb1f2029a2b349bdfbfd51a61af6fe6608646123a11111b54391cccff001",
+        "timestamp": "1794910120"
+      },
+      "outcome": "unavailable",
+      "policyVersion": "1",
+      "signers": [
+        "0x3c25aD59862531A022c96A49c067E991441240C5",
+        "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
+      ],
+      "resultFile": "results/cli-index-upload-confirmed.json"
+    },
+    {
+      "label": "cli-approved-release-snapshot",
+      "checkedAt": "2026-11-17T10:25:15.653Z",
+      "block": {
+        "number": "46452274",
+        "hash": "0x92d7a2eeea3830982c8abce51014576bdf5d1fd2d958f1b4ed9a2e419b9ab48f",
+        "timestamp": "1794911111"
+      },
+      "outcome": "match",
+      "policyVersion": "1",
+      "signers": [
+        "0x3c25aD59862531A022c96A49c067E991441240C5",
+        "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
+      ],
+      "resultFile": "results/cli-approved-release-snapshot.json"
     }
-  ]
+  ],
+  "publicPilot": {
+    "happyPath": "passed",
+    "verificationFile": "results/cli-approved-release.json",
+    "checkedBlock": {
+      "number": "46452266",
+      "hash": "0xf1795b80bbece1fca98f65457f1aef19c1ed2bc724b4738fa494a4d4ccf6224e",
+      "timestamp": "1794911103"
+    },
+    "actualWalletSigning": true,
+    "actualTapeOutContracts": false,
+    "observed": [
+      "enrollment and registration",
+      "two separate reviewer wallet signatures",
+      "onchain approval recording",
+      "interrupted upload stayed unavailable",
+      "wallet-session timeout reconciled by exact receipt",
+      "CLI resumed without paying to upload index.html twice",
+      "approved publishing and fresh byte verification"
+    ],
+    "adverseCasesNotTransactedOnPublicTestnet": [
+      "changed-file mutation",
+      "revocation",
+      "ownership transfer and re-enrollment",
+      "circuit recovery"
+    ],
+    "adverseCaseCoverage": "These cases pass in the disposable local CLI and fixture integration tests; public transactions for these cases have not been sent.",
+    "negativeControlsFile": "results/cli-negative-controls.json"
+  },
+  "totalPaidTestOKB": "0.000131457266572863"
 }

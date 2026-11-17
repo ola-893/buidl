@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "network": "xlayer-testnet-fixtures",
+  "chainId": 1952,
+  "rpcUrl": "https://testrpc.xlayer.tech/terigon",
+  "owner": "0xe26468ae02368a75dbdbea58f367b7313942ad26",
+  "reviewers": [
+    "0x3c25ad59862531a022c96a49c067e991441240c5",
+    "0x679a4abf5c35c593e0d8e6db2ee120dd11d8456e"
+  ],
+  "threshold": 2,
+  "fixtures": {
+    "kind": "testnet-fixtures",
+    "chainId": 1952,
+    "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+    "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
+  }
+}

@@ -77,7 +77,7 @@ buidl testnet recover --from 0xNEWOWNER --broadcast --wallet
 
 A new owner needs test OKB for transactions. Set a new reviewer policy excluding that owner before requesting new approvals. Re-enrollment advances authority history; old signatures cannot be reused.
 
-`publish` resumes a matching in-progress attempt and rewrites the staged files deterministically. It does not mark an interrupted release as verified. After an interrupted deployment, repeat `deploy`; the saved deployment plan permits resuming the missing authority without redeploying the fixture. If the nonce changed before the first deployment, inspect the saved plan before replacing it.
+`publish` resumes a matching in-progress attempt and skips files only when fresh onchain byte verification matches their exact manifest hash, size and type. Incomplete or changed files are rewritten deterministically. It does not mark an interrupted release as verified. After an interrupted deployment, repeat `deploy`; the saved deployment plan permits resuming the missing authority without redeploying the fixture. If the nonce changed before the first deployment, inspect the saved plan before replacing it.
 
 The CLI saves transaction plans, hashes, complete receipts, blocks and paid gas costs in `.buidl/transactions.json` next to the project. If signing or broadcasting has an uncertain outcome, further writes stop. Check wallet activity and reconcile the exact hash:
 
@@ -99,3 +99,15 @@ buidl testnet verify --project ./buidl.json --json
 ```
 
 The gate controls workflows that invoke it. Blocking users from opening an unauthorized release still requires integration with the serving viewer or gateway.
+
+## Recorded public fixture pilot
+
+The actual holder and two reviewer wallets completed approval → CLI publishing → fresh verification on X Layer testnet 1952. [Verification evidence](testnet/results/cli-approved-release.json) records **Matches approved release** at block **46452266**, checked **2026-11-17 10:25:09 UTC**. [Final public receipt](https://www.okx.com/web3/explorer/xlayer-test/tx/0x2aa40ef20a4b93ab2b4cad85bfcb1d3bcddef574cfd8356caa04c0b29c824db9) · [All CLI receipts and estimates](testnet/cli-transactions.json).
+
+From the checkout, perform a new read rather than relying on the saved result:
+
+```sh
+npm run buidl -- testnet verify --project docs/testnet/cli-project.json --manifest docs/testnet/manifest-a.json --json
+```
+
+On this Mac, append `--rpc http://127.0.0.1:8552` while the guarded public-testnet relay is running if the direct RPC is unavailable. Approval expiry, revocation, ownership and content can change the fresh result. This public pilot uses buidl fixtures. The adverse lifecycle scenarios remain separately labeled local tests.

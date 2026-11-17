@@ -56,6 +56,8 @@ test('bundled CLI browser signer completes release lifecycle and rejects mainnet
   await command(['recover','--from',buyer,'--broadcast','--wallet'],buyer);
   const ledger=JSON.parse(await readFile(join(root,'.buidl','transactions.json'),'utf8'));
   assert.ok(ledger.length>15&&ledger.every((e:any)=>e.status==='success'&&e.receipt));
+  assert.equal(ledger.filter((e:any)=>e.plan.label==='Upload index.html · chunk 1/1').length,1);
+  assert.equal(ledger.filter((e:any)=>e.plan.label==='Upload payment.json · chunk 1/1').length,1);
   await rpc('anvil_setChainId',[196]);
   await command(['publish',resolve('demo/release-a'),ma,'--broadcast','--wallet'],owner,1);
 });
