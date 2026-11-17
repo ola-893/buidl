@@ -1,0 +1,26 @@
+{
+  "kind": "recording-helper-validation",
+  "mockedCli": true,
+  "publicTransactionsSent": 0,
+  "networkRequestsSent": 0,
+  "checks": [
+    "Setup and all 12 core cues complete, with 24 timing markers and validated reports",
+    "A repeated recording refuses to rerun transactions automatically",
+    "Explicit cleanup recovery/disconnect path completes",
+    "Wrong negative-test reason (RPC failure) stops the recording",
+    "Cleanup refuses after an interrupted/failed core recording",
+    "Unavailable verification cannot count as revoked approval"
+  ],
+  "passed": true,
+  "timing": {
+    "sections": 12,
+    "finalDurationSeconds": 180,
+    "spokenWords": 308,
+    "targetWordsPerMinute": 132,
+    "allSlotsContinuous": true,
+    "lastCueEndsAt180Seconds": true
+  },
+  "shellSyntax": "bash -n passed",
+  "voiceTiming": "Estimates only. No user voice recording was supplied or generated.",
+  "scope": "Recording materials only. Installed CLI unchanged; no npm release or blockchain operation performed."
+}

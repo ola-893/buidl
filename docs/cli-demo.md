@@ -1,5 +1,7 @@
 # Recording with the CLI
 
+For a three-minute final cut with separately recorded setup, use the [timed recording kit](recording/README.md), including narration, pauses and a standalone operator-controlled helper.
+
 Use the actual operational commands below, one at a time. There is no bundled demo command. Prepare your funded testnet holder and two reviewer wallets, a small build directory and a clean recording terminal.
 
 This sequence uses X Layer testnet (1952) and explicitly labeled buidl hosting fixtures. It does not deploy actual TapeOut testnet contracts. The software's adversarial integration tests run separately from the presentation.

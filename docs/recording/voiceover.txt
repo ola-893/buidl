@@ -1,0 +1,53 @@
+buidl — 3:00 voice-over script
+Own voice · target 132 words/minute · 308 words total
+Read each paragraph as a separate take. Bracketed directions are not spoken.
+Start each paragraph at its cue time in the edited film; hold silence at the end.
+Timing estimates are guides until your recorded voice has been measured.
+
+[C01 · 00:00–00:08 · The problem · 15 words]
+A reviewed checkout can change after approval. How do you verify what is actually deployed?
+[Pause approximately 1.2 seconds on the result. Do not read this line.]
+
+[C02 · 00:08–00:18 · Prepared app and policy · 20 words]
+This is buidl on X Layer testnet, using labeled hosting fixtures. Setup is complete, with two separate reviewer wallets required.
+[Pause approximately 0.9 seconds on the result. Do not read this line.]
+
+[C03 · 00:18–00:36 · Bind the build · 29 words]
+I generate a manifest from the build. It commits to exact files, lengths, content types, and fallback routing. The approval request also binds the registry, policy, sequence, and expiry.
+[Pause approximately 4.8 seconds on the result. Do not read this line.]
+
+[C04 · 00:36–00:54 · Reviewer one · 30 words]
+The first reviewer connects their wallet and signs this release request. Connection and release approval are separate signatures. The CLI recovers the signer and checks that this wallet is authorized.
+[Pause approximately 4.4 seconds on the result. Do not read this line.]
+
+[C05 · 00:54–01:12 · Reviewer two · 30 words]
+A second reviewer wallet signs the same request. The holder cannot count as a reviewer, and duplicate signatures do not satisfy the threshold. Both signatures refer to the same release.
+[Pause approximately 4.4 seconds on the result. Do not read this line.]
+
+[C06 · 01:12–01:32 · Record approval · 33 words]
+I reconnect the holder and preview the approval. The CLI validates both reviewer signatures before recording their commitment onchain. I review the estimated test token cost and confirm the transaction in my wallet.
+[Pause approximately 5.0 seconds on the result. Do not read this line.]
+
+[C07 · 01:32–01:54 · Gate and publish · 37 words]
+The publishing gate checks this exact build against the active approval. Publishing then uploads the files through separate wallet confirmations. Before finishing, buidl reconstructs the uploaded bytes and checks their hashes and routing against the approved release.
+[Pause approximately 5.2 seconds on the result. Do not read this line.]
+
+[C08 · 01:54–02:12 · Fresh approved match · 31 words]
+Fresh verification now reports a match. Both file hashes are verified, the approval is current, and publication is complete. The checked block, check time, and public receipts make this result inspectable.
+[Pause approximately 3.9 seconds on the result. Do not read this line.]
+
+[C09 · 02:12–02:28 · Reject a changed build · 30 words]
+Now I change the payment recipient in a local build copy. The existing approval does not authorize those new bytes. The gate rejects the mismatch before requesting a publishing transaction.
+[Pause approximately 2.4 seconds on the result. Do not read this line.]
+
+[C10 · 02:28–02:36 · Verify the published release again · 14 words]
+The published release still matches. The rejected local change never replaced the approved deployment.
+[Pause approximately 1.6 seconds on the result. Do not read this line.]
+
+[C11 · 02:36–02:54 · Revoke approval · 28 words]
+Finally, I revoke approval onchain. The files remain deployed, but fresh verification now reports revoked approval. Teams can withdraw their approval without pretending the hosted bytes have disappeared.
+[Pause approximately 5.3 seconds on the result. Do not read this line.]
+
+[C12 · 02:54–03:00 · Close · 11 words]
+Approve exact bytes. Gate the workflow. Verify fresh. That is buidl.
+[Pause approximately 1.0 seconds on the result. Do not read this line.]

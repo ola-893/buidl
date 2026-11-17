@@ -1,0 +1,106 @@
+{
+  "title": "buidl — approval to deployment verification",
+  "durationSeconds": 180,
+  "narrationWordsPerMinute": 132,
+  "setupRecordedSeparately": true,
+  "voice": "Operator's own voice; no generated audio",
+  "network": "X Layer testnet 1952; labeled buidl hosting fixtures",
+  "cues": [
+    {
+      "id": "C01", "start": 0, "end": 8,
+      "title": "The problem", "speakAfter": "The CLI version is visible.",
+      "voice": "A reviewed checkout can change after approval. How do you verify what is actually deployed?",
+      "screen": "Clean terminal; buidl --version. Keep a small scope label visible throughout the edit.",
+      "mustShow": "Installed CLI version 0.5.0.",
+      "edit": "Hold the terminal. No transaction or signing is needed here."
+    },
+    {
+      "id": "C02", "start": 8, "end": 18,
+      "title": "Prepared app and policy", "speakAfter": "The registered policy output is visible.",
+      "voice": "This is buidl on X Layer testnet, using labeled hosting fixtures. Setup is complete, with two separate reviewer wallets required.",
+      "screen": "App configuration, then policy show. Focus the threshold and reviewer addresses.",
+      "mustShow": "Chain 1952, threshold 2, two distinct reviewers, current authority.",
+      "edit": "Deployment and enrollment belong in the separate setup recording. Do not imply these are actual TapeOut testnet contracts."
+    },
+    {
+      "id": "C03", "start": 18, "end": 36,
+      "title": "Bind the build", "speakAfter": "The manifest and approval request have both been created.",
+      "voice": "I generate a manifest from the build. It commits to exact files, lengths, content types, and fallback routing. The approval request also binds the registry, policy, sequence, and expiry.",
+      "screen": "release create; release inspect; release request. Show the manifest digest and the two file entries.",
+      "mustShow": "The manifest comes from the build that will be published.",
+      "edit": "Trim typing and repeated JSON scrolling, keeping each real command and its result."
+    },
+    {
+      "id": "C04", "start": 36, "end": 54,
+      "title": "Reviewer one", "speakAfter": "Reviewer one's release signature is verified.",
+      "voice": "The first reviewer connects their wallet and signs this release request. Connection and release approval are separate signatures. The CLI recovers the signer and checks that this wallet is authorized.",
+      "screen": "wallet connect for reviewer one; release sign; extension EIP-712 request; verified signer output.",
+      "mustShow": "Reviewer one's account, the release signature prompt, and the verified result.",
+      "edit": "Show connection briefly. Keep the release signature confirmation readable. Shorten empty extension/RPC waiting with a visible time-compressed label."
+    },
+    {
+      "id": "C05", "start": 54, "end": 72,
+      "title": "Reviewer two", "speakAfter": "Reviewer two's release signature is verified.",
+      "voice": "A second reviewer wallet signs the same request. The holder cannot count as a reviewer, and duplicate signatures do not satisfy the threshold. Both signatures refer to the same release.",
+      "screen": "Connect the second account; sign the same request into a separate evidence file.",
+      "mustShow": "A different reviewer address and the same manifest digest.",
+      "edit": "Show the account change and real signature result. Do not call these independent people unless they actually are."
+    },
+    {
+      "id": "C06", "start": 72, "end": 92,
+      "title": "Record approval", "speakAfter": "The holder's approval-recording transaction has a successful receipt.",
+      "voice": "I reconnect the holder and preview the approval. The CLI validates both reviewer signatures before recording their commitment onchain. I review the estimated test token cost and confirm the transaction in my wallet.",
+      "screen": "Holder connection; release approve preview; release approve --execute; receipt.",
+      "mustShow": "Threshold evidence, quoted cost, chain 1952 in the wallet, successful transaction hash.",
+      "edit": "Keep preview and receipt. Condense the connection and waiting, never the fact that confirmation was required."
+    },
+    {
+      "id": "C07", "start": 92, "end": 114,
+      "title": "Gate and publish", "speakAfter": "The publishing command has completed with an approved match.",
+      "voice": "The publishing gate checks this exact build against the active approval. Publishing then uploads the files through separate wallet confirmations. Before finishing, buidl reconstructs the uploaded bytes and checks their hashes and routing against the approved release.",
+      "screen": "release gate; release publish --execute; representative upload quote and wallet confirmation; remaining receipts; publication finish.",
+      "mustShow": "Gate passed; real upload and finish receipts; each transaction was individually confirmed.",
+      "edit": "Compress multi-transaction waits. Use '5 individually confirmed testnet transactions · waits shortened' only if this run's history actually shows five successful publishing transactions. Otherwise show the actual count."
+    },
+    {
+      "id": "C08", "start": 114, "end": 132,
+      "title": "Fresh approved match", "speakAfter": "The new verification report says Matches approved release.",
+      "voice": "Fresh verification now reports a match. Both file hashes are verified, the approval is current, and publication is complete. The checked block, check time, and public receipts make this result inspectable.",
+      "screen": "release verify, then its report and wallet history. Focus outcome, block, checkedAt, authority and file statuses.",
+      "mustShow": "Matches approved release; checked block and time; incomplete false; verified files.",
+      "edit": "Give the match and block at least four seconds unobstructed. No static badge is presented as perpetual proof."
+    },
+    {
+      "id": "C09", "start": 132, "end": 148,
+      "title": "Reject a changed build", "speakAfter": "The changed local build is rejected specifically for a manifest mismatch.",
+      "voice": "Now I change the payment recipient in a local build copy. The existing approval does not authorize those new bytes. The gate rejects the mismatch before requesting a publishing transaction.",
+      "screen": "Show old and changed payment.json recipients, then release gate dist-changed manifest.json and the mismatch error.",
+      "mustShow": "The recipient difference and the exact build/manifest mismatch error.",
+      "edit": "Label 'Local changed build · blocked before publishing'. Do not claim deployed-file mutation or onchain attack detection from this test."
+    },
+    {
+      "id": "C10", "start": 148, "end": 156,
+      "title": "Verify the published release again", "speakAfter": "A second fresh verification still reports an approved match.",
+      "voice": "The published release still matches. The rejected local change never replaced the approved deployment.",
+      "screen": "A new release verify report, with its new check time and block.",
+      "mustShow": "A real second verification, not a replay of C08.",
+      "edit": "Hold the matching outcome; retain enough context to distinguish the fresh report."
+    },
+    {
+      "id": "C11", "start": 156, "end": 174,
+      "title": "Revoke approval", "speakAfter": "Revocation is confirmed and the new verification reports revoked approval.",
+      "voice": "Finally, I revoke approval onchain. The files remain deployed, but fresh verification now reports revoked approval. Teams can withdraw their approval without pretending the hosted bytes have disappeared.",
+      "screen": "release revoke --execute; confirmation receipt; release verify returning exit code 2 with revoked outcome.",
+      "mustShow": "Successful revoke receipt, followed by Approval revoked or expired with approvalRevoked true.",
+      "edit": "Shorten wallet/RPC waiting, keeping the transaction and changed verification result in order. Do not substitute an unavailable/error result for revoked."
+    },
+    {
+      "id": "C12", "start": 174, "end": 180,
+      "title": "Close", "speakAfter": "The revoked verification report remains visible.",
+      "voice": "Approve exact bytes. Gate the workflow. Verify fresh. That is buidl.",
+      "screen": "Hold terminal and npm install command as a small end overlay: npm install -g @ola-893/buidl@0.5.0",
+      "mustShow": "The install command is readable; the final narration does not claim viewer-side access blocking.",
+      "edit": "Keep the final second silent. Disconnect and optional custody recovery are recorded after this cut."
+    }
+  ]
+}
