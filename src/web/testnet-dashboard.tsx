@@ -8,7 +8,7 @@ import { storeAbi } from '../core/tapeout';
 import {
   assertTestnet, assertTestnetRequest, beginTestnet, compareTestnet, estimateTestnet, fixtureAbi, parseTestnetConfig, planTestnet, planTestnetAuthority,
   requireTestnetGate, testnet, testnetAuthorityAbi, testnetClient, testnetOutcome, testnetRequest, testnetSite, testnetSnapshot,
-  testnetWrite, type PlannedTx, type TestnetConfig, type TestnetSnapshot,
+  testnetWrite, usesTestnetRelay, type PlannedTx, type TestnetConfig, type TestnetSnapshot,
 } from '../core/testnet';
 import { publishTestnet } from '../core/testnet-publish';
 import { Badge, CopyValue, Diff, Inventory, Modal } from './evidence-components';
@@ -349,6 +349,7 @@ export function TestnetDashboard() {
         <div className="actions">{providers.map((next, index) => <button key={index} className="button" disabled={!!busy} onClick={() => void connect(next)}><Wallet size={16} /> {next.name}</button>)}
           {provider && chain !== 1952 && <button className="button primary" disabled={!!busy} onClick={() => void run('Switch network', switchNetwork)}>Switch to X Layer testnet</button>}</div>
         <p>This route checks chain 1952 before estimating, signing, and sending. Both fixture constructors enforce chain 1952.</p>
+        {usesTestnetRelay() && <p>Reads use the local relay to public X Layer testnet 1952. This connection is separate from the Anvil rehearsal.</p>}
       </section>
       <section className="card content-card stack">
         <h2>Deployment plan</h2><p>The fixtures stand in for TapeOut infrastructure unavailable at the reviewed testnet deployment addresses.</p>

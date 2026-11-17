@@ -19,8 +19,12 @@ export const testnet = defineChain({
   testnet: true,
 });
 export type TestnetClient = PublicClient<Transport, typeof testnet>;
+export const usesTestnetRelay = () => typeof location !== 'undefined' &&
+  ['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname) &&
+  new URLSearchParams(location.search).get('testnet') === '1' && new URLSearchParams(location.search).get('rpc') === 'relay';
 export const testnetClient = (): TestnetClient => createPublicClient({ chain: testnet,
-  transport: fallback(TESTNET_RPCS.map(url => http(url, { timeout: 10_000, retryCount: 0 })), { retryCount: 0 }) });
+  transport: usesTestnetRelay() ? http('http://127.0.0.1:8552', { timeout: 45_000, retryCount: 0 }) :
+    fallback(TESTNET_RPCS.map(url => http(url, { timeout: 10_000, retryCount: 0 })), { retryCount: 0 }) });
 export const fixtureAbi = [...storeAbi, ...parseAbi([
   'function holder() view returns(address)',
   'function uploading() view returns(bool)',

@@ -22,8 +22,9 @@ test.beforeAll(async () => {
 });
 test.afterAll(() => { node?.kill('SIGTERM'); });
 
-test('dashboard checks network and costs, collects separate signatures and verifies the testnet fixture journey', async ({ page }) => {
-  await page.route(/https:\/\/(testrpc\.xlayer\.tech|xlayertestrpc\.okx\.com)\/terigon/, async route => {
+for (const relay of [false, true]) {
+test(`dashboard checks the fixture journey using ${relay ? 'the relay connection' : 'public RPC connections'}`, async ({ page }) => {
+  await page.route(/https:\/\/(testrpc\.xlayer\.tech|xlayertestrpc\.okx\.com)\/terigon|http:\/\/127\.0\.0\.1:8552/, async route => {
     const response = await fetch(endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: route.request().postData() });
     await route.fulfill({ status: 200, contentType: 'application/json', body: await response.text() });
   });
@@ -51,7 +52,7 @@ test('dashboard checks network and costs, collects separate signatures and verif
     })));
   }, { owner: accounts[0] });
 
-  await page.goto('/?testnet=1');
+  await page.goto(`/?testnet=1${relay ? '&rpc=relay' : ''}`);
   await page.getByRole('button', { name: 'Controlled testnet wallet', exact: true }).click();
   await expect(page.getByText(/Wallet chain 196/).first()).toBeVisible();
   await expect(page.getByRole('button', { name: 'Estimate testnet deployment' })).toBeDisabled();
@@ -160,3 +161,4 @@ test('dashboard checks network and costs, collects separate signatures and verif
   await page.getByRole('button', { name: 'Export receipts & results' }).click();
   expect((await download).suggestedFilename()).toBe('buidl-testnet-report.json');
 });
+}
