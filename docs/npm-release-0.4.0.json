@@ -1,0 +1,109 @@
+{
+  "kind": "npm-public-release-verification",
+  "package": "@ola-893/buidl",
+  "version": "0.4.0",
+  "checkedAt": "2026-11-17T10:46:36.883Z",
+  "registry": "https://registry.npmjs.org/",
+  "packagePage": "https://www.npmjs.com/package/@ola-893/buidl",
+  "publicAnonymousMetadataVerified": true,
+  "latest": "0.4.0",
+  "dist": {
+    "shasum": "bed37192ee2ac2ab3c16afdc54750e78797f4022",
+    "tarball": "https://registry.npmjs.org/@ola-893/buidl/-/buidl-0.4.0.tgz",
+    "fileCount": 6,
+    "integrity": "sha512-3EVnfHkEkanm8llmUuTfmKEGfQGAADsrJeuDudOM2Vqi8VATY1GPgolwQ17L4X1vikrGly3hKrn628RfawHlXQ==",
+    "signatures": [
+      {
+        "sig": "MEUCICLJ8Bb3SHpfTF2uSFkrclemLywNpUDq6/qVc6jCqMKOAiEAw5bLit7CHYKNdOHOlk+BGARwc7KQpB99uID3733Qipc=",
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+      },
+      {
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+        "sig": "MEYCIQCEaeVd3diBeQvoJTpjmMKIfKf1X12Qqr5Brjh4XR8YngIhALXP2cJv3oTkurnrKPI3+VCUSbbrtfzaa2d3HOnbeSbJ"
+      }
+    ],
+    "unpackedSize": 1035969
+  },
+  "source": {
+    "repository": "https://github.com/ola-893/buidl",
+    "tag": "v0.4.0",
+    "commit": "4f97be1"
+  },
+  "cleanRegistryInstall": {
+    "command": "npm install --global --prefix <temporary-dir> --cache <empty-cache> @ola-893/buidl@0.4.0 --registry https://registry.npmjs.org/",
+    "outsideRepository": true,
+    "versionOutput": "0.4.0",
+    "installedExecutableMatchesReleasedBundle": true,
+    "executableSha256": "901c75d932b8892da8cfdd0453ebcc79deb18be3f3b0a965ea8b1fb5ab6d71f8"
+  },
+  "demo": {
+    "command": "buidl demo --out ./evidence --json",
+    "checks": [
+      {
+        "check": "Circuit enrolled; two separate reviewers registered",
+        "passed": true,
+        "block": "4"
+      },
+      {
+        "check": "Publishing blocked before approval",
+        "passed": true,
+        "block": "4"
+      },
+      {
+        "check": "One signature rejected; two distinct reviewers verified",
+        "passed": true,
+        "block": "4"
+      },
+      {
+        "check": "Approved release published; fresh bytes match",
+        "passed": true,
+        "block": "10"
+      },
+      {
+        "check": "Interrupted upload is unavailable",
+        "passed": true,
+        "block": "11"
+      },
+      {
+        "check": "Interrupted publishing resumes the existing attempt",
+        "passed": true,
+        "block": "12"
+      },
+      {
+        "check": "Changed payment detected despite valid onchain file hashes",
+        "passed": true,
+        "block": "15"
+      },
+      {
+        "check": "Revocation invalidates approval",
+        "passed": true,
+        "block": "16"
+      },
+      {
+        "check": "Depositor recovers circuit; ownership exit invalidates policy",
+        "passed": true,
+        "block": "17"
+      },
+      {
+        "check": "New owner enrollment cannot reuse prior approval",
+        "passed": true,
+        "block": "19"
+      },
+      {
+        "check": "Prior owner signatures rejected after ownership change",
+        "passed": true,
+        "block": "19"
+      },
+      {
+        "check": "New owner recovers circuit",
+        "passed": true,
+        "block": "20"
+      }
+    ],
+    "passed": 12,
+    "receipts": 20,
+    "network": "Disposable local Anvil; NOT public X Layer testnet",
+    "actualUserWallets": false,
+    "mainnetTransactionsSent": false
+  }
+}

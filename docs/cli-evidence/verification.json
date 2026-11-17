@@ -1,18 +1,20 @@
 {
   "kind": "buidl-cli-distribution-verification",
   "version": "0.4.0",
-  "checkedAt": "2026-11-17T10:29:20.908Z",
-  "publicRelease": false,
+  "checkedAt": "2026-11-17T10:46:36.883Z",
+  "publicRelease": true,
   "reference": "https://github.com/ola-893/Remora/tree/codex/near-hackathon/packages/cli",
   "cleanInstall": {
-    "command": "npm install --omit=dev --prefix <temporary-dir> <buidl-0.4.0.tgz>",
+    "command": "npm install --global --prefix <temporary-dir> --cache <empty-cache> @ola-893/buidl@0.4.0 --registry https://registry.npmjs.org/",
     "outsideRepository": true,
     "versionOutput": "0.4.0",
+    "registryDownload": true,
     "package": {
-      "filename": "buidl-0.4.0.tgz",
-      "bytes": 237239,
-      "integrity": "sha512-BFdxCFPp51B+rNDtSPTI+5EwIemQzK+99/U/4WK7ZdZHXLTt701zjmIaWFO1CRelzoOPp9nFnL8fL210NP0cAg==",
-      "sha256": "7ba3456f38d2126ac467da1f7af266da878c4a8428b3e27b30488bb90619b1bd"
+      "name": "@ola-893/buidl",
+      "filename": "ola-893-buidl-0.4.0.tgz",
+      "bytes": 237426,
+      "integrity": "sha512-3EVnfHkEkanm8llmUuTfmKEGfQGAADsrJeuDudOM2Vqi8VATY1GPgolwQ17L4X1vikrGly3hKrn628RfawHlXQ==",
+      "shasum": "bed37192ee2ac2ab3c16afdc54750e78797f4022"
     }
   },
   "demo": {
@@ -103,5 +105,11 @@
     "finalTransaction": "0x2aa40ef20a4b93ab2b4cad85bfcb1d3bcddef574cfd8356caa04c0b29c824db9",
     "checkedBlock": "46452266",
     "adverseCases": "Local test coverage for deployed-file mutation, revocation, ownership change and recovery; these public testnet transactions were not sent."
+  },
+  "npmRelease": {
+    "package": "@ola-893/buidl",
+    "version": "0.4.0",
+    "evidence": "../npm-release-0.4.0.json",
+    "integrity": "sha512-3EVnfHkEkanm8llmUuTfmKEGfQGAADsrJeuDudOM2Vqi8VATY1GPgolwQ17L4X1vikrGly3hKrn628RfawHlXQ=="
   }
 }
