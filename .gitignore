@@ -8,3 +8,7 @@ public/local-demo/
 build-cli/
 buidl-*.tgz
 build-contracts/
+
+.buidl/
+buidl.json
+buidl.json.deployment.json

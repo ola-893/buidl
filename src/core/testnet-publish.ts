@@ -12,6 +12,7 @@ export async function publishTestnet(
   staged: { manifest: Manifest; contents: ReadonlyMap<string, Uint8Array> },
   send: TestnetSend,
   client?: TestnetClient,
+  options: { resume?: boolean } = {},
 ) {
   const first = await testnetSnapshot(config, client);
   requireTestnetGate(staged.manifest, config, first);
@@ -26,8 +27,10 @@ export async function publishTestnet(
     }
     return { file, bytes };
   });
-  await send({ ...beginTestnet(config, first), label: 'Begin approved testnet publication' });
-  const attempt = first.attempt + 1n;
+  const resuming = options.resume && first.inProgress && first.sequence === first.approval!.commitment.approval.sequence &&
+    first.publicationDigest === first.approval!.commitment.approval.manifestDigest;
+  if (!resuming) await send({ ...beginTestnet(config, first), label: 'Begin approved testnet publication' });
+  const attempt = resuming ? first.attempt : first.attempt + 1n;
   for (const { file, bytes } of files) {
     const chunks = Math.max(1, Math.ceil(bytes.length / 12_000));
     for (let index = 0; index < chunks; index++) {

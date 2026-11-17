@@ -1,6 +1,6 @@
 {
   "name": "buidl",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -21,7 +21,8 @@
     "build:testnet": "tsx scripts/build-testnet.ts",
     "check:testnet": "tsx scripts/build-testnet.ts --check",
     "testnet:relay": "tsx scripts/testnet-relay.ts",
-    "test:testnet": "tsx --test tests/testnet.integration.ts"
+    "test:testnet": "tsx --test tests/testnet.integration.ts",
+    "test:cli": "npm run build:cli && tsx --test tests/terminal.integration.ts"
   },
   "devDependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",
@@ -54,6 +55,7 @@
     "buidl": "build-cli/buidl.mjs"
   },
   "files": [
-    "build-cli/"
+    "build-cli/",
+    "docs/cli-demo.md"
   ]
 }

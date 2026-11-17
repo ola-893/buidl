@@ -1,17 +1,17 @@
 {
   "kind": "testnet-fixture-pilot-status",
   "chainId": 1952,
-  "recordedAt": "2026-11-17T09:17:10.124Z",
+  "recordedAt": "2026-11-17T09:31:38.983Z",
   "holder": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
   "reviewers": [
     "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E",
     "0x3c25aD59862531A022c96A49c067E991441240C5"
   ],
-  "balanceWei": "199905439735271987",
-  "pendingNonce": 4,
+  "balanceWei": "199894902054745103",
+  "pendingNonce": 6,
   "block": {
-    "number": "46447121",
-    "hash": "0x05e60034572da4b7030d7542ebba26901358426e48e6ae4bc4ab0ae024300eb2"
+    "number": "46448512",
+    "hash": "0xffcaca8aa0d3a606654dac0ee3b668370f9790773ec4db4885961d6fd0267b78"
   },
   "predictedConfig": {
     "kind": "testnet-fixtures",
@@ -19,7 +19,7 @@
     "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
     "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
   },
-  "deploymentStatus": "fixtures-enrolled-policy-registered-two-reviewers-signed",
+  "deploymentStatus": "approved-publication-incomplete-cli-resume-prepared",
   "publicReceipts": [
     {
       "role": "simulated-circuit-store",
@@ -55,6 +55,24 @@
       "status": "success",
       "paidWei": "3997760199888",
       "receiptFile": "receipts/reviewer-policy.json"
+    },
+    {
+      "role": "release-1-approval",
+      "transactionHash": "0xdd49e201805d06cfe5437edcbafb6c7cff0d1ccd9226cad8327d5dd8fe7efa76",
+      "contract": "0xd52a10a333d316189e87076f2c600c4de5fe08d6",
+      "block": "46448388",
+      "status": "success",
+      "paidWei": "6459140322957",
+      "receiptFile": "receipts/release-1-approval.json"
+    },
+    {
+      "role": "release-1-publication-start",
+      "transactionHash": "0x050e0791d60047aa271672d1eb48eda4d8ac23ad9be6252117d038f8103f37a2",
+      "contract": "0xe047120881026327af28e74a6ea0c046edd01568",
+      "block": "46448512",
+      "status": "success",
+      "paidWei": "4078540203927",
+      "receiptFile": "receipts/release-1-publication-start.json"
     }
   ],
   "actualReviewerSignatures": [
@@ -101,7 +119,7 @@
     "lastSubmissionError": -32603,
     "permissionRepair": "Disconnected only the local buidl origin and reconnected on chain 1952",
     "rpcSelected": "http://127.0.0.1:8552",
-    "journey": "Fixture and authority deployed; enrollment and two-reviewer policy confirmed. Both actual reviewers signed release 1. Approval recording and publication remain pending.",
+    "journey": "Fixture deployment, enrollment, reviewer policy and release 1 approval are confirmed on public testnet. Both actual reviewers signed. Publication attempt 1 began; the CLI is resuming from the first file upload.",
     "resolvedRpcFailure": "Earlier direct RPC broadcast failed; local guarded relay subsequently broadcast authority, enrollment and policy successfully to public testnet."
   },
   "scope": "Simulated DeWEB/TapeOut fixtures. Not a live integration with actual TapeOut contracts.",
@@ -111,7 +129,8 @@
     "rpcRelay": "http://127.0.0.1:8552",
     "relayNetwork": "Actual public X Layer testnet 1952; not Anvil",
     "desktop": "Unlocked; Chrome and MetaMask available",
-    "next": "Record release 1 with the two exported actual reviewer signatures, then publish the staged sample A."
+    "next": "Review the CLI index.html transaction at holder nonce 6; remaining publishing steps are individually costed and signed.",
+    "surface": "buidl CLI primary; temporary browser page for wallet signing"
   },
   "deployedConfig": {
     "kind": "testnet-fixtures",
@@ -120,7 +139,7 @@
     "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
   },
   "registry": "0xd52A10A333D316189e87076f2c600C4De5FE08d6",
-  "currentSnapshotFile": "results/reviewer-policy.json",
+  "currentSnapshotFile": "results/interrupted-at-cli-handoff.json",
   "publicChecks": [
     {
       "label": "enrollment",
@@ -161,6 +180,38 @@
         "0x679a4abf5c35c593e0d8e6db2ee120dd11d8456e"
       ],
       "resultFile": "results/reviewer-signatures.json"
+    },
+    {
+      "label": "release-1-approved-unpublished",
+      "checkedAt": "2026-11-17T09:21:05.907Z",
+      "block": {
+        "number": "46448422",
+        "hash": "0x70d50ca5e4ac64fa7e57e6ec96e26ee974cff0056927e0f18e11dbd8eee246d6",
+        "timestamp": "1794907259"
+      },
+      "outcome": "unavailable",
+      "policyVersion": "1",
+      "signers": [
+        "0x3c25aD59862531A022c96A49c067E991441240C5",
+        "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
+      ],
+      "resultFile": "results/release-1-approved-unpublished.json"
+    },
+    {
+      "label": "interrupted-at-cli-handoff",
+      "checkedAt": "2026-11-17T09:30:11.935Z",
+      "block": {
+        "number": "46448969",
+        "hash": "0xb38ab642d2d509cb39bef993515fba753a1cd1e864ad090eed3f025bf221443e",
+        "timestamp": "1794907806"
+      },
+      "outcome": "unavailable",
+      "policyVersion": "1",
+      "signers": [
+        "0x3c25aD59862531A022c96A49c067E991441240C5",
+        "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
+      ],
+      "resultFile": "results/interrupted-at-cli-handoff.json"
     }
   ]
 }

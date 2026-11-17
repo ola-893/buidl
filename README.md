@@ -6,16 +6,19 @@ buidl verifies X Layer DeWEB bytes against TapeOut and compares complete deploym
 
 ## Use buidl
 
-- [Web dashboard](https://ola-893.github.io/buidl/) for inspecting a deployment and preparing a manifest.
-- [Public verification](https://ola-893.github.io/buidl/?verify=1.2.230.tape) for a fresh content check without a wallet. From a resolved dashboard inspection, open **Verification link** to share a different site.
-- [Installable CLI](https://github.com/ola-893/buidl/releases/tag/v0.3.0) for terminal and CI workflows. Node.js 22.13+ is required.
+The **CLI is the primary product distribution and demo surface**. Developers generate manifests, collect reviewer signatures, gate publishing and verify deployed files from the terminal. The [web dashboard](https://ola-893.github.io/buidl/) and [public verification links](https://ola-893.github.io/buidl/?verify=1.2.230.tape) provide inspection and shareable evidence.
 
 ```sh
-npm install -g https://github.com/ola-893/buidl/releases/download/v0.3.0/buidl-0.3.0.tgz
-buidl inspect 1.2.230.tape
+npm ci
+npm pack
+npm install -g ./buidl-0.4.0.tgz
+buidl --version
+buidl demo --out ./demo-evidence
 ```
 
-CLI v0.3.0 includes the X Layer pilot commands. To build the package yourself, run `npm ci` and `npm pack` from the checkout.
+The one-command demo requires Foundry Anvil, runs the complete lifecycle on its own disposable local node and writes twelve checks with receipts. It sends no public network transactions. The [CLI guide](docs/cli-demo.md) covers actual testnet wallet signing, publishing, recovery and CI.
+
+This branch prepares CLI **0.4.0**. The [published v0.3.0](https://github.com/ola-893/buidl/releases/tag/v0.3.0) supports the earlier X Layer pilot commands and predates this testnet CLI. Building this checkout does not publish a new release. Node.js 22.13+ is required.
 
 Public links perform fresh reads when opened, recheck while open, and display the checked block and UTC check time. A live X Layer link reports content integrity and checks current approval when the site is enrolled in a recognized authority. A loopback demo link checks the actual Anvil registry and shows its reviewer evidence and match status. It is scoped to that particular local registry instance and, when available, its current release digest.
 
@@ -32,7 +35,7 @@ Open [buidl](http://127.0.0.1:5173). The default site, `1.2.230.tape`, is read f
 
 Run the mainnet inspection in a terminal with `npm run buidl -- inspect 1.2.230.tape`. A captured result is in [live inspection evidence](docs/live-inspection.json).
 
-For the testnet-only pilot, open [the separate testnet dashboard](http://127.0.0.1:5173/?testnet=1) and follow [the testnet runbook](docs/testnet-pilot.md). It uses labeled buidl fixtures on chain 1952 because the reviewed TapeOut deployment addresses have no testnet code. Every transaction has a cost review before wallet signing, and the fixture constructors reject mainnet. The testnet commands are available from this checkout; CLI v0.3.0 predates them.
+For the testnet-only pilot, run `buidl testnet --help` and follow [the CLI guide](docs/cli-demo.md). The [separate testnet dashboard](http://127.0.0.1:5173/?testnet=1) and [custody runbook](docs/testnet-pilot.md) remain available. It uses labeled buidl fixtures on chain 1952 because the reviewed TapeOut deployment addresses have no testnet code. Every transaction has a cost review before wallet signing, and the fixture constructors reject mainnet. The testnet commands are available from this checkout; CLI v0.3.0 predates them.
 
 ## Run the controlled release workflow
 

@@ -7,8 +7,18 @@ import { compareLocal, inspectLocal, localState, outcomes, parseLocalConfig } fr
 import { gate, publishLocal } from './publish';
 import { testnetCli } from './cli-testnet';
 import { xLayerCli } from './cli-xlayer';
+import { terminalTestnet } from './terminal/testnet-cli';
+import { runTerminalDemo } from './terminal/demo';
+import packageInfo from '../package.json';
 
-const help = `buidl
+const help = `buidl ${packageInfo.version} · release approval and verification
+
+Start here:
+  demo [--out <evidence-dir>] [--json]   Complete disposable local rehearsal; no real funds
+  testnet --help                       CLI release workflow on X Layer testnet 1952
+  --version                            Installed CLI version
+
+Existing commands:
   inspect <X Layer identifier>
   manifest <build-dir> --site <site.json> --release <id> --out <manifest.json> [--fallback <path>] [--commit <hex>] [--provenance <text>]
   gate <build-dir> <manifest.json> <trusted-local-config.json>
@@ -26,7 +36,10 @@ const load = async (path: string) => JSON.parse(await readFile(path, 'utf8')) as
 
 async function main() {
   const [command, ...args] = process.argv.slice(2);
-  if (!command || command === '--help') {
+  if (command === '--version' || command === '-v') return console.log(packageInfo.version);
+  if (command === 'testnet') return terminalTestnet(args);
+  if (command === 'demo') return runTerminalDemo(args);
+  if (!command || command === '--help' || command === '-h') {
     console.log(help);
     return;
   }
@@ -85,6 +98,6 @@ async function main() {
 }
 
 main().catch(error => {
-  console.error(error.message);
+  console.error(process.argv.includes('--json') ? JSON.stringify({ error: error.message }) : error.message);
   process.exitCode = 1;
 });

@@ -1,0 +1,104 @@
+{
+  "kind": "buidl-cli-distribution-verification",
+  "version": "0.4.0",
+  "checkedAt": "2026-11-17T09:53:25.543Z",
+  "publicRelease": false,
+  "reference": "https://github.com/ola-893/Remora/tree/codex/near-hackathon/packages/cli",
+  "cleanInstall": {
+    "command": "npm install --omit=dev --prefix <temporary-dir> <buidl-0.4.0.tgz>",
+    "outsideRepository": true,
+    "versionOutput": "0.4.0",
+    "package": {
+      "filename": "buidl-0.4.0.tgz",
+      "bytes": 236616,
+      "integrity": "sha512-Th1qZi5jwQFua77t4woWmEd+9e+wYOQIrxIRizgaUDoDUGtGlzEordbpA7nSXQHn0bcWz5GDiRWuxDyP78Jwtg==",
+      "sha256": "4e19635e3feed2dcc5655ad547498ca9c2b1eebe3c0f9241d14b1756b0269c35"
+    }
+  },
+  "demo": {
+    "command": "buidl demo --out ./evidence --json",
+    "network": "Disposable local Anvil; NOT public X Layer testnet",
+    "actualTapeOutContracts": false,
+    "actualUserWallets": false,
+    "mainnetTransactionsSent": false,
+    "checks": [
+      {
+        "check": "Circuit enrolled; two separate reviewers registered",
+        "passed": true,
+        "block": "4"
+      },
+      {
+        "check": "Publishing blocked before approval",
+        "passed": true,
+        "block": "4"
+      },
+      {
+        "check": "One signature rejected; two distinct reviewers verified",
+        "passed": true,
+        "block": "4"
+      },
+      {
+        "check": "Approved release published; fresh bytes match",
+        "passed": true,
+        "block": "10"
+      },
+      {
+        "check": "Interrupted upload is unavailable",
+        "passed": true,
+        "block": "11"
+      },
+      {
+        "check": "Interrupted publishing resumes the existing attempt",
+        "passed": true,
+        "block": "15"
+      },
+      {
+        "check": "Changed payment detected despite valid onchain file hashes",
+        "passed": true,
+        "block": "18"
+      },
+      {
+        "check": "Revocation invalidates approval",
+        "passed": true,
+        "block": "19"
+      },
+      {
+        "check": "Depositor recovers circuit; ownership exit invalidates policy",
+        "passed": true,
+        "block": "20"
+      },
+      {
+        "check": "New owner enrollment cannot reuse prior approval",
+        "passed": true,
+        "block": "22"
+      },
+      {
+        "check": "Prior owner signatures rejected after ownership change",
+        "passed": true,
+        "block": "22"
+      },
+      {
+        "check": "New owner recovers circuit",
+        "passed": true,
+        "block": "23"
+      }
+    ],
+    "receiptCount": 23
+  },
+  "checks": {
+    "build": "passed",
+    "unitTests": {
+      "passed": 10,
+      "total": 10
+    },
+    "fixtureLifecycle": "passed on disposable local Anvil",
+    "cliBrowserLifecycle": "passed using controlled injected provider and disposable Anvil; actual MetaMask confirmation is separate",
+    "fixtureFingerprints": "unchanged"
+  },
+  "actualPublicTestnet": {
+    "chainId": 1952,
+    "source": "buidl test fixtures; not actual TapeOut contracts",
+    "state": "Release 1 approved by actual reviewers; attempt 1 incomplete; CLI wallet review prepared at holder nonce 6",
+    "evidence": "../testnet/pilot-status.json"
+  }
+}
