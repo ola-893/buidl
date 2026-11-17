@@ -1,0 +1,101 @@
+{
+  "kind": "public-testnet-fixture-snapshot",
+  "chainId": 1952,
+  "checkedAt": "2026-11-17T09:00:12.311Z",
+  "config": {
+    "kind": "testnet-fixtures",
+    "chainId": 1952,
+    "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+    "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
+  },
+  "outcome": "none",
+  "snapshot": {
+    "inspection": {
+      "source": "testnet-fixture",
+      "name": "Simulated testnet checkout",
+      "status": "empty",
+      "detail": "The container has no registered files.",
+      "files": [],
+      "site": {
+        "chainId": 1952,
+        "processor": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+        "circuitId": "1",
+        "container": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d"
+      },
+      "registry": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+      "holder": "0xE047120881026327aF28E74a6EA0C046Edd01568",
+      "activation": "local",
+      "block": {
+        "number": "46447169",
+        "hash": "0x14ce86e5f2185fd1dda3f653012ea2c5b954fb2407e53b39e3f6ef00cabdd3ad",
+        "timestamp": "1794906006"
+      },
+      "fallback": ""
+    },
+    "approval": {
+      "block": {
+        "baseFeePerGas": "20000000",
+        "blobGasUsed": "0",
+        "difficulty": "0",
+        "excessBlobGas": "0",
+        "extraData": "0x0100000032000000010000000001312d00",
+        "gasLimit": "210000000",
+        "gasUsed": "46062",
+        "hash": "0x14ce86e5f2185fd1dda3f653012ea2c5b954fb2407e53b39e3f6ef00cabdd3ad",
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "miner": "0x4200000000000000000000000000000000000011",
+        "mixHash": "0x930427ed298082285312bbdeaa6a3dca5bfd264a97689fc3d014fd7fc82dd28b",
+        "nonce": "0x0000000000000000",
+        "number": "46447169",
+        "parentBeaconBlockRoot": "0x0d811c425fc9c3da24003aa4b564eefc8c44d32393fdb19a36ca78a16fea2598",
+        "parentHash": "0xf1a036945d0b93d8bef9dd0e2e269761879f7bfa59af50d82f9a28c9c552e8fd",
+        "receiptsRoot": "0xd5e36cb6034f894a16a8d2a986235712e64225a577081cb513a4dc250d17fb70",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "size": "910",
+        "stateRoot": "0x001b2c711aeabdafeea72c4b1fd5a7257ff5e9e74840300e6b4bae2635e292c6",
+        "timestamp": "1794906006",
+        "transactions": [
+          "0xa0e51b6fe7322762fbf754bd6c35b99ba9ddb4cdd5d6d0496de5948d0498dc9e"
+        ],
+        "transactionsRoot": "0x02ea7bc735b4fe55ff30cd4c98022d49be39918dc0358db20210a3819aab4215",
+        "uncles": [],
+        "withdrawals": [],
+        "withdrawalsRoot": "0x8ed4baae3a927be3dea54996b4d5899f8c01e7594bf50b17dc1e741388ce3d12",
+        "totalDifficulty": null
+      },
+      "policy": {
+        "holder": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
+        "epoch": "1",
+        "version": "1",
+        "threshold": "2",
+        "reviewers": [
+          "0x3c25aD59862531A022c96A49c067E991441240C5",
+          "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E"
+        ]
+      },
+      "commitment": {
+        "approval": {
+          "siteKey": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "policyVersion": "0",
+          "sequence": "0",
+          "expiry": "0",
+          "schemaVersion": "0",
+          "manifestDigest": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "artifactDigest": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "rollback": false
+        },
+        "revoked": false,
+        "signers": []
+      },
+      "authorityCurrent": true,
+      "instanceSalt": "0xee4445ea93d1b4a8c81489d8df5cf62177442456f4fa37c64fe9aaa3ee53a00d"
+    },
+    "registry": "0xd52A10A333D316189e87076f2c600C4De5FE08d6",
+    "governor": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
+    "attempt": "0",
+    "inProgress": false,
+    "sequence": "0",
+    "publicationDigest": "0x0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

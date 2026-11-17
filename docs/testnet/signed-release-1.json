@@ -1,0 +1,39 @@
+{
+  "manifest": {
+    "schemaVersion": 1,
+    "site": {
+      "chainId": 1952,
+      "processor": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+      "circuitId": "1",
+      "container": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d"
+    },
+    "release": "testnet-checkout-a",
+    "routing": {
+      "fallback": "index.html"
+    },
+    "files": [
+      {
+        "path": "index.html",
+        "bytes": 761,
+        "type": "text/html",
+        "sha256": "0x01a5da05e10877d9af6f146c559b9530d337a7daa3d29cf635c55b03d57e6d43"
+      },
+      {
+        "path": "payment.json",
+        "bytes": 61,
+        "type": "application/json",
+        "sha256": "0x11f6ac91c008bd4844d0ccd5f8a336f98b0ec90cd5ef8023b5003cc2d54fab61"
+      }
+    ]
+  },
+  "registry": "0xd52a10a333d316189e87076f2c600c4de5fe08d6",
+  "instanceSalt": "0xee4445ea93d1b4a8c81489d8df5cf62177442456f4fa37c64fe9aaa3ee53a00d",
+  "policyVersion": 1,
+  "sequence": 1,
+  "expiry": 1794992571,
+  "rollback": false,
+  "signatures": [
+    "0x258fba6fa94bb0c9280a9bcce9286869c29a2d1877a714d738f7d1dbfaafaba842a81872004d8516f1cc960da74680c9c78aca5cfb2578eaef96621bdec2bf271b",
+    "0xcea956c7e3bb50bc0c17c3a04f1c659e70880dbc74e93ef670d148108d8304eb4311e81aa4d3b5adc594aaf6e0f7df6b9f393d0039427d29bafdfa54764fe8da1c"
+  ]
+}

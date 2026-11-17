@@ -1,0 +1,27 @@
+{
+  "kind": "public-testnet-fixture-signature-check",
+  "chainId": 1952,
+  "checkedAt": "2026-11-17T09:17:10.124Z",
+  "block": {
+    "number": "46448187",
+    "hash": "0x1aa6f652087a0524458b70b1f23d2efec99324e8e85f0e39487a51688ce109cb",
+    "timestamp": "1794907024"
+  },
+  "registry": "0xd52a10a333d316189e87076f2c600c4de5fe08d6",
+  "manifestDigest": "0x3009cf76be7286a25b885493959403d05e27c5612467ef3058cf96a61da36524",
+  "signers": [
+    "0x3c25ad59862531a022c96a49c067e991441240c5",
+    "0x679a4abf5c35c593e0d8e6db2ee120dd11d8456e"
+  ],
+  "threshold": 2,
+  "twoSignatureSimulation": {
+    "accepted": true
+  },
+  "oneSignatureSimulation": {
+    "rejected": true,
+    "reason": "Execution reverted for an unknown reason.",
+    "note": "Relay omits RPC revert data; exact custom error unavailable. Identical call with both signatures succeeds at the same checked block."
+  },
+  "transactionsSent": 0,
+  "passed": true
+}

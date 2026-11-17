@@ -1,0 +1,98 @@
+{
+  "kind": "public-testnet-fixture-snapshot",
+  "chainId": 1952,
+  "checkedAt": "2026-11-17T08:50:11.575Z",
+  "config": {
+    "kind": "testnet-fixtures",
+    "chainId": 1952,
+    "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+    "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
+  },
+  "outcome": "none",
+  "snapshot": {
+    "inspection": {
+      "source": "testnet-fixture",
+      "name": "Simulated testnet checkout",
+      "status": "empty",
+      "detail": "The container has no registered files.",
+      "files": [],
+      "site": {
+        "chainId": 1952,
+        "processor": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+        "circuitId": "1",
+        "container": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d"
+      },
+      "registry": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+      "holder": "0xE047120881026327aF28E74a6EA0C046Edd01568",
+      "activation": "local",
+      "block": {
+        "number": "46446570",
+        "hash": "0x11dc80afa86a53123af6f421b15fed6f481dc2343fc2a1c2fea0c02840cbb9f0",
+        "timestamp": "1794905407"
+      },
+      "fallback": ""
+    },
+    "approval": {
+      "block": {
+        "baseFeePerGas": "20000000",
+        "blobGasUsed": "0",
+        "difficulty": "0",
+        "excessBlobGas": "0",
+        "extraData": "0x0100000032000000010000000001312d00",
+        "gasLimit": "210000000",
+        "gasUsed": "46074",
+        "hash": "0x11dc80afa86a53123af6f421b15fed6f481dc2343fc2a1c2fea0c02840cbb9f0",
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "miner": "0x4200000000000000000000000000000000000011",
+        "mixHash": "0x05f76a7c1a1697b2e5ce6112df3c88427fd096388ec75452d634265fcc436837",
+        "nonce": "0x0000000000000000",
+        "number": "46446570",
+        "parentBeaconBlockRoot": "0x467b9e418b9048c12ea12a1c3008b8f936811839d2533da9ef7944126ea990e8",
+        "parentHash": "0xf46ed82eff13d17ad011ce1634e086b0f967c4352c7186db86867cdf26d58032",
+        "receiptsRoot": "0x881223df2b2bb4ea1330efdc520533e6b8975ce198dea96075f6bd3f27ca3c52",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "size": "910",
+        "stateRoot": "0x56b47392b49de631bd45f0f8875f855b588a90b551d5a52abff6d32674c389f8",
+        "timestamp": "1794905407",
+        "transactions": [
+          "0x1afe11820b00501a9559e4899980de06b419ca8a28baa30b34550445828a7076"
+        ],
+        "transactionsRoot": "0x6b40ad1b175c7e8896db2491c5b79227dd2bd6b81b234655ed53317ba5e7e026",
+        "uncles": [],
+        "withdrawals": [],
+        "withdrawalsRoot": "0x8ed4baae3a927be3dea54996b4d5899f8c01e7594bf50b17dc1e741388ce3d12",
+        "totalDifficulty": null
+      },
+      "policy": {
+        "holder": "0x0000000000000000000000000000000000000000",
+        "epoch": "0",
+        "version": "0",
+        "threshold": "0",
+        "reviewers": []
+      },
+      "commitment": {
+        "approval": {
+          "siteKey": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "policyVersion": "0",
+          "sequence": "0",
+          "expiry": "0",
+          "schemaVersion": "0",
+          "manifestDigest": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "artifactDigest": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "rollback": false
+        },
+        "revoked": false,
+        "signers": []
+      },
+      "authorityCurrent": false,
+      "instanceSalt": "0xee4445ea93d1b4a8c81489d8df5cf62177442456f4fa37c64fe9aaa3ee53a00d"
+    },
+    "registry": "0xd52A10A333D316189e87076f2c600C4De5FE08d6",
+    "governor": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
+    "attempt": "0",
+    "inProgress": false,
+    "sequence": "0",
+    "publicationDigest": "0x0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

@@ -1,17 +1,17 @@
 {
   "kind": "testnet-fixture-pilot-status",
   "chainId": 1952,
-  "recordedAt": "2026-11-17T08:22:55.841Z",
+  "recordedAt": "2026-11-17T09:17:10.124Z",
   "holder": "0xe26468ae02368a75DBDBea58F367B7313942ad26",
   "reviewers": [
     "0x679A4aBF5c35c593e0d8e6dB2Ee120dd11d8456E",
     "0x3c25aD59862531A022c96A49c067E991441240C5"
   ],
-  "balanceWei": "199971281058564053",
-  "pendingNonce": 1,
+  "balanceWei": "199905439735271987",
+  "pendingNonce": 4,
   "block": {
-    "number": "46391574",
-    "hash": "0xf78cb7559f04187f0466e8246a17b88080a91c7b22b7234c3edb4346ad8b71bb"
+    "number": "46447121",
+    "hash": "0x05e60034572da4b7030d7542ebba26901358426e48e6ae4bc4ab0ae024300eb2"
   },
   "predictedConfig": {
     "kind": "testnet-fixtures",
@@ -19,7 +19,7 @@
     "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
     "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
   },
-  "deploymentStatus": "fixture-deployed-authority-pending",
+  "deploymentStatus": "fixtures-enrolled-policy-registered-two-reviewers-signed",
   "publicReceipts": [
     {
       "role": "simulated-circuit-store",
@@ -28,9 +28,51 @@
       "block": "46391574",
       "status": "success",
       "receiptFile": "fixture-deployment-receipt.json"
+    },
+    {
+      "role": "authority-deployment",
+      "transactionHash": "0xd0766adcb72b656c872326f94b28ab916549b9574a93a951da807f86ccf43855",
+      "contract": "0xe047120881026327af28e74a6ea0c046edd01568",
+      "block": "46445927",
+      "status": "success",
+      "paidWei": "39740541987027",
+      "receiptFile": "receipts/authority-deployment.json"
+    },
+    {
+      "role": "enrollment",
+      "transactionHash": "0x70227b223ebf28a0150d8ce057947257ff7fe5dd37b7b987fd05d041836ad3d9",
+      "contract": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+      "block": "46446431",
+      "status": "success",
+      "paidWei": "22103021105151",
+      "receiptFile": "receipts/enrollment.json"
+    },
+    {
+      "role": "reviewer-policy",
+      "transactionHash": "0xd7feab35fce5fed1af6edbe43c2719de52798a0846fe2f38c80d9db4ee0ea063",
+      "contract": "0xd52a10a333d316189e87076f2c600c4de5fe08d6",
+      "block": "46447121",
+      "status": "success",
+      "paidWei": "3997760199888",
+      "receiptFile": "receipts/reviewer-policy.json"
     }
   ],
-  "actualReviewerSignatures": [],
+  "actualReviewerSignatures": [
+    {
+      "address": "0x3c25ad59862531a022c96a49c067e991441240c5",
+      "sequence": 1,
+      "policyVersion": 1,
+      "evidenceFile": "signed-release-1.json",
+      "verifiedAt": "2026-11-17T09:17:10.124Z"
+    },
+    {
+      "address": "0x679a4abf5c35c593e0d8e6db2ee120dd11d8456e",
+      "sequence": 1,
+      "policyVersion": 1,
+      "evidenceFile": "signed-release-1.json",
+      "verifiedAt": "2026-11-17T09:17:10.124Z"
+    }
+  ],
   "automatedRehearsal": {
     "network": "local Anvil using chain ID 1952",
     "fixtures": true,
@@ -59,16 +101,66 @@
     "lastSubmissionError": -32603,
     "permissionRepair": "Disconnected only the local buidl origin and reconnected on chain 1952",
     "rpcSelected": "http://127.0.0.1:8552",
-    "journey": "First fixture deployed. Authority, enrollment, reviewer signatures and public lifecycle still pending.",
-    "latestFailure": "Holder confirmed the authority transaction, but MetaMask failed eth_sendRawTransaction. Fresh pending nonce remains 1 and authority code is absent."
+    "journey": "Fixture and authority deployed; enrollment and two-reviewer policy confirmed. Both actual reviewers signed release 1. Approval recording and publication remain pending.",
+    "resolvedRpcFailure": "Earlier direct RPC broadcast failed; local guarded relay subsequently broadcast authority, enrollment and policy successfully to public testnet."
   },
   "scope": "Simulated DeWEB/TapeOut fixtures. Not a live integration with actual TapeOut contracts.",
   "mainnetTransactionsSent": false,
   "resume": {
-    "localDashboard": "http://127.0.0.1:5173/?testnet=1",
+    "localDashboard": "http://127.0.0.1:5173/?testnet=1&rpc=relay",
     "rpcRelay": "http://127.0.0.1:8552",
     "relayNetwork": "Actual public X Layer testnet 1952; not Anvil",
     "desktop": "Unlocked; Chrome and MetaMask available",
-    "next": "Relay configured in MetaMask; review and sign authority deployment at nonce 1."
-  }
+    "next": "Record release 1 with the two exported actual reviewer signatures, then publish the staged sample A."
+  },
+  "deployedConfig": {
+    "kind": "testnet-fixtures",
+    "chainId": 1952,
+    "fixture": "0xe97847558dded18fc6208ce47eeec7ab73c09d9d",
+    "authority": "0xe047120881026327af28e74a6ea0c046edd01568"
+  },
+  "registry": "0xd52A10A333D316189e87076f2c600C4De5FE08d6",
+  "currentSnapshotFile": "results/reviewer-policy.json",
+  "publicChecks": [
+    {
+      "label": "enrollment",
+      "checkedAt": "2026-11-17T08:50:11.575Z",
+      "block": {
+        "number": "46446570",
+        "hash": "0x11dc80afa86a53123af6f421b15fed6f481dc2343fc2a1c2fea0c02840cbb9f0",
+        "timestamp": "1794905407"
+      },
+      "outcome": "none",
+      "policyVersion": "0",
+      "signers": [],
+      "resultFile": "results/enrollment.json"
+    },
+    {
+      "label": "reviewer-policy",
+      "checkedAt": "2026-11-17T09:00:12.311Z",
+      "block": {
+        "number": "46447169",
+        "hash": "0x14ce86e5f2185fd1dda3f653012ea2c5b954fb2407e53b39e3f6ef00cabdd3ad",
+        "timestamp": "1794906006"
+      },
+      "outcome": "none",
+      "policyVersion": "1",
+      "signers": [],
+      "resultFile": "results/reviewer-policy.json"
+    },
+    {
+      "label": "reviewer-signatures-and-threshold",
+      "checkedAt": "2026-11-17T09:17:10.124Z",
+      "block": {
+        "number": "46448187",
+        "hash": "0x1aa6f652087a0524458b70b1f23d2efec99324e8e85f0e39487a51688ce109cb",
+        "timestamp": "1794907024"
+      },
+      "signers": [
+        "0x3c25ad59862531a022c96a49c067e991441240c5",
+        "0x679a4abf5c35c593e0d8e6db2ee120dd11d8456e"
+      ],
+      "resultFile": "results/reviewer-signatures.json"
+    }
+  ]
 }

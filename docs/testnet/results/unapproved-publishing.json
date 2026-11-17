@@ -1,0 +1,15 @@
+{
+  "kind": "public-testnet-fixture-check",
+  "chainId": 1952,
+  "checkedAt": "2026-11-17T08:57:09.414Z",
+  "test": "blocks-unapproved-publishing",
+  "passed": true,
+  "block": {
+    "number": "46446986",
+    "hash": "0xb90550a5012068863864711d35f04eac57e257c70783e309162ad61b1b6bb5ff",
+    "timestamp": "1794905823"
+  },
+  "manifestDigest": "0x3009cf76be7286a25b885493959403d05e27c5612467ef3058cf96a61da36524",
+  "error": "No active testnet approval for the exact build.",
+  "transactionsSent": 0
+}
