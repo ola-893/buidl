@@ -1,0 +1,64 @@
+{
+  "kind": "operational-cli-npm-release",
+  "package": "@ola-893/buidl",
+  "version": "0.5.0",
+  "checkedAt": "2026-11-17T11:34:19.885Z",
+  "publicRelease": true,
+  "packagePage": "https://www.npmjs.com/package/@ola-893/buidl",
+  "source": {
+    "repository": "https://github.com/ola-893/buidl",
+    "tag": "v0.5.0",
+    "commit": "fa3b2fa"
+  },
+  "dist": {
+    "shasum": "d3087ebda55f7b56bcd83a7175cdb563a9f519a3",
+    "tarball": "https://registry.npmjs.org/@ola-893/buidl/-/buidl-0.5.0.tgz",
+    "fileCount": 7,
+    "integrity": "sha512-G8gAjcRS0llLEw7XXbDHyRv2QjxyRHHDmfPYDS3A6y4UVuIXPv1J1D2VDL59rf79wII75WCRLIWDYZuIXm+ZIA==",
+    "signatures": [
+      {
+        "sig": "MEYCIQD59NsHzQudqHR13Z+9EUrP2107PYRPkPkFrk6zikzKhAIhAMpzp0UaIUEy+7o015gRSBHZ06Kna0aERg4X+EKR1FN7",
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+      },
+      {
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+        "sig": "MEUCIBcuwp66chkVZYIHXz3ufWVTIm6ykwSl8ok5dVJ+f+3LAiEAgP9z2vrkPFkxsqqqvMEYqEp8g9nuYIPbKIrhDO2iJsU="
+      }
+    ],
+    "unpackedSize": 1058914
+  },
+  "latest": "0.5.0",
+  "cleanRegistryInstallation": {
+    "globalStyle": true,
+    "freshCache": true,
+    "outsideRepository": true,
+    "versionOutput": "0.5.0",
+    "executableMatchesTestedArtifact": true,
+    "sha256": "d32d1baeb7536dc8d7346b5cc3b4754d0f908ba295653181b0159a7e86a5ce3e",
+    "walletCommandsPresent": true,
+    "demoCommandRemoved": true
+  },
+  "tests": {
+    "unit": {
+      "passed": 12,
+      "total": 12
+    },
+    "packagedOperationalIntegration": {
+      "passed": 2,
+      "total": 2,
+      "individualCommands": 49,
+      "confirmedLocalTransactions": 16,
+      "evidence": "cli-commands-0.5.0.json"
+    },
+    "existingBrowserInspection": "passed (read-only X Layer)",
+    "existingLocalBrowserLifecycle": "passed"
+  },
+  "walletVerification": {
+    "connection": "Signed EIP-191 challenge, recovered address, persisted public profile",
+    "approval": "Connected reviewer signs EIP-712 release request",
+    "transactions": "Connected account confirms each quoted transaction; receipt checked against original plan",
+    "keysImported": false,
+    "network": "X Layer testnet 1952"
+  },
+  "scope": "New operational wallet flow tested with controlled browser provider and disposable local Anvil. Earlier real-wallet public fixture pilot is separately recorded in docs/testnet. No mainnet transactions sent."
+}
