@@ -4,19 +4,17 @@ The CLI is buidl's primary distribution and demo surface. It generates release m
 
 The workflow takes inspiration from [Remora's CLI](https://github.com/ola-893/Remora/tree/codex/near-hackathon/packages/cli): terminal commands own the lifecycle, browser wallets approve signatures, and portable evidence makes the run independently inspectable. This implementation uses buidl's existing release registry and publisher; it does not include Remora code.
 
-## Install from this checkout
+## Install
 
 Use Node.js 22.13+; install Foundry's `anvil` for the disposable demo.
 
 ```sh
-npm ci
-npm pack
-npm install -g ./buidl-0.4.0.tgz
+npm install -g @ola-893/buidl@0.4.0
 buidl --version
 buidl --help
 ```
 
-Version 0.4.0 is prepared in this branch. The public v0.3.0 download does not contain these commands. No new npm or GitHub release is implied by building this checkout. The packed CLI includes its wallet page, fixture bytecode and demo; it runs outside the repository without Vite, React, source files or a running dashboard.
+The npm package is `@ola-893/buidl`; the executable remains `buidl`. To build from source, run `npm ci` and `npm pack`, then install `./ola-893-buidl-0.4.0.tgz`. The old GitHub v0.3.0 download does not contain these commands. The packed CLI includes its wallet page, fixture bytecode and demo; it runs outside the repository without Vite, React, source files or a running dashboard.
 
 ## One-command demo
 

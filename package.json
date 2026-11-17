@@ -1,7 +1,6 @@
 {
-  "name": "buidl",
+  "name": "@ola-893/buidl",
   "version": "0.4.0",
-  "private": true,
   "type": "module",
   "engines": {
     "node": ">=22.13"
@@ -57,5 +56,14 @@
   "files": [
     "build-cli/",
     "docs/cli-demo.md"
-  ]
+  ],
+  "description": "Release approval, gated publishing and fresh verification for DeWEB on X Layer",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "homepage": "https://github.com/ola-893/buidl#readme",
+  "bugs": {
+    "url": "https://github.com/ola-893/buidl/issues"
+  }
 }

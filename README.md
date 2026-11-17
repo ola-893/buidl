@@ -9,16 +9,14 @@ buidl verifies X Layer DeWEB bytes against TapeOut and compares complete deploym
 The **CLI is the primary product distribution and demo surface**. Developers generate manifests, collect reviewer signatures, gate publishing and verify deployed files from the terminal. The [web dashboard](https://ola-893.github.io/buidl/) and [public verification links](https://ola-893.github.io/buidl/?verify=1.2.230.tape) provide inspection and shareable evidence.
 
 ```sh
-npm ci
-npm pack
-npm install -g ./buidl-0.4.0.tgz
+npm install -g @ola-893/buidl@0.4.0
 buidl --version
 buidl demo --out ./demo-evidence
 ```
 
 The one-command demo requires Foundry Anvil, runs the complete lifecycle on its own disposable local node and writes twelve checks with receipts. It sends no public network transactions. The [CLI guide](docs/cli-demo.md) covers actual testnet wallet signing, publishing, recovery and CI.
 
-This branch prepares CLI **0.4.0**. The [published v0.3.0](https://github.com/ola-893/buidl/releases/tag/v0.3.0) supports the earlier X Layer pilot commands and predates this testnet CLI. Building this checkout does not publish a new release. Node.js 22.13+ is required.
+The npm package is [`@ola-893/buidl`](https://www.npmjs.com/package/@ola-893/buidl); its terminal command is `buidl`. To build the same package from source, run `npm ci` and `npm pack`. The [published v0.3.0](https://github.com/ola-893/buidl/releases/tag/v0.3.0) supports the earlier X Layer pilot commands and predates this testnet CLI. Node.js 22.13+ is required.
 
 Public links perform fresh reads when opened, recheck while open, and display the checked block and UTC check time. A live X Layer link reports content integrity and checks current approval when the site is enrolled in a recognized authority. A loopback demo link checks the actual Anvil registry and shows its reviewer evidence and match status. It is scoped to that particular local registry instance and, when available, its current release digest.
 
