@@ -3,6 +3,8 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { privateKeyToAccount } from 'viem/accounts';
+import { verifyConnectionProof } from '../src/terminal/connection';
 import { createPublicClient, http } from 'viem';
 import { startWalletSession, verifyTransaction } from '../src/terminal/wallet';
 import { parseProject } from '../src/terminal/project';
@@ -44,4 +46,24 @@ test('uncertain wallet requests block subsequent writes across CLI invocations',
     await s.save([{plan:{label:'pending',from:a,to:b,data:'0x',nonce:1,gas:'1',gasPrice:'1',estimatedWei:'1'},status:'wallet-requested'}]);
     let invoked=false;await assert.rejects(s.locked(async()=>{invoked=true}),/uncertain outcome/);assert.equal(invoked,false);
   }finally{await rm(root,{recursive:true,force:true})}
+});
+
+test('wallet connection proof binds the selected address and unique challenge',async()=>{
+  const account=privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
+  const message='Connect buidl CLI; testnet 1952; nonce unique-test-value';
+  const proof={address:account.address,signature:await account.signMessage({message}),wallet:'Test wallet'};
+  const verified=await verifyConnectionProof(proof,message,Date.now()+10000,account.address);
+  assert.equal(verified.address,account.address.toLowerCase());
+  await assert.rejects(verifyConnectionProof(proof,message+'changed',Date.now()+10000),/signature/);
+  await assert.rejects(verifyConnectionProof(proof,message,Date.now()-1),/expired/);
+  await assert.rejects(verifyConnectionProof(proof,message,Date.now()+10000,b),/requested account/);
+});
+test('explicit wallet rejection closes a session without accepting a result',async()=>{
+  const s=await startWalletSession({kind:'transaction'},async()=>{throw Error('Must not verify a transaction')});
+  const url=new URL(s.url),headers={authorization:'Bearer '+url.hash.slice(1),'content-type':'application/json'};
+  try{
+    assert.equal((await fetch(url.origin+'/reject',{method:'POST',headers,body:'{}'})).status,200);
+    await assert.rejects(s.done,/rejected in wallet/);
+    assert.equal((await fetch(url.origin+'/result',{method:'POST',headers,body:JSON.stringify({value:'anything'})})).status,409);
+  }finally{await s.close()}
 });

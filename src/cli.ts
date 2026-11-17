@@ -8,29 +8,13 @@ import { gate, publishLocal } from './publish';
 import { testnetCli } from './cli-testnet';
 import { xLayerCli } from './cli-xlayer';
 import { terminalTestnet } from './terminal/testnet-cli';
-import { runTerminalDemo } from './terminal/demo';
+import { operationalCli, operationalHelp } from './terminal/commands';
+import { connectionFile } from './terminal/connection';
+import { report } from './terminal/output';
+import { fileURLToPath } from 'node:url';
 import packageInfo from '../package.json';
 
-const help = `buidl ${packageInfo.version} · release approval and verification
-
-Start here:
-  demo [--out <evidence-dir>] [--json]   Complete disposable local rehearsal; no real funds
-  testnet --help                       CLI release workflow on X Layer testnet 1952
-  --version                            Installed CLI version
-
-Existing commands:
-  inspect <X Layer identifier>
-  manifest <build-dir> --site <site.json> --release <id> --out <manifest.json> [--fallback <path>] [--commit <hex>] [--provenance <text>]
-  gate <build-dir> <manifest.json> <trusted-local-config.json>
-  publish-local <build-dir> <manifest.json> <trusted-local-config.json>
-  verify-local <manifest.json> <trusted-local-config.json>
-  plan-xlayer <X Layer identifier>
-  verify-xlayer <X Layer identifier>
-  gate-xlayer <X Layer identifier> <build-dir> <manifest.json>
-  publish-xlayer <X Layer identifier> <build-dir> <manifest.json> --broadcast --account <Foundry keystore alias>
-  plan-testnet-fixtures <owner> --chain-id 1952 --out <plan.json> [--fixture <existing-simulated-circuit>]
-  verify-testnet-fixtures <config.json>
-  gate-testnet-fixtures <build-dir> <manifest.json> <config.json>`;
+const help = operationalHelp;
 
 const load = async (path: string) => JSON.parse(await readFile(path, 'utf8')) as unknown;
 
@@ -38,7 +22,8 @@ async function main() {
   const [command, ...args] = process.argv.slice(2);
   if (command === '--version' || command === '-v') return console.log(packageInfo.version);
   if (command === 'testnet') return terminalTestnet(args);
-  if (command === 'demo') return runTerminalDemo(args);
+  if (['wallet','app','policy','release','doctor'].includes(command)) return operationalCli(command, args);
+  if (command === 'diagnostics') return report('CLI diagnostics', { version: packageInfo.version, package: packageInfo.name, executable: process.argv[1], runtime: process.version, module: fileURLToPath(import.meta.url), walletProfile: connectionFile() }, args.includes('--json'));
   if (!command || command === '--help' || command === '-h') {
     console.log(help);
     return;
@@ -94,7 +79,7 @@ async function main() {
   }
   if (await testnetCli(command, args)) return;
   if (await xLayerCli(command, args)) return;
-  throw new Error(help);
+  throw new Error(`Unknown command: ${command}.\n${help}`);
 }
 
 main().catch(error => {

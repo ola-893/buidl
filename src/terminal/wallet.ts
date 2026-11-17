@@ -5,6 +5,9 @@ import { isHash, recoverTypedDataAddress, toHex, type Address, type Hex } from '
 import { approvalTypedData, type Evidence } from '../core/approval';
 import { assertTestnet, type PlannedTx, type TestnetClient } from '../core/testnet';
 import { jsonText } from './output';
+import { walletPage } from './wallet-page';
+
+export class WalletRejected extends Error { constructor() { super('Request rejected in wallet. No transaction was submitted.'); } }
 
 // A single fixed request per capability. The CLI independently verifies wallet results.
 export async function startWalletSession(payload: Record<string, unknown>, verify: (value: string) => Promise<void>, timeoutMs = 600_000, port = 0) {
@@ -26,13 +29,17 @@ export async function startWalletSession(payload: Record<string, unknown>, verif
     const expected = Buffer.from(`Bearer ${token}`);
     if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) return send(403, { error: 'Session required.' });
     if (req.method === 'GET' && req.url === '/request') return send(200, { ...payload, complete: settled });
-    if (req.method !== 'POST' || req.url !== '/result') return send(404, { error: 'Not found.' });
+    if (req.method !== 'POST' || !['/result','/reject'].includes(req.url ?? '')) return send(404, { error: 'Not found.' });
     if (settled || processing) return send(409, { error: 'Request already handled.' });
     processing = true;
     try {
       let body = '';
       for await (const part of req) { body += part; if (body.length > 2048) throw new Error('Result too large.'); }
       const data = JSON.parse(body);
+      if (req.url === '/reject') {
+        if (!data || Object.keys(data).length !== 0) throw new Error('Invalid rejection callback.');
+        settled = true; send(200, { cancelled: true }); reject(new WalletRejected()); return;
+      }
       if (Object.keys(data).length !== 1 || typeof data.value !== 'string') throw new Error('Expected one wallet result.');
       await verify(data.value);
       settled = true; send(200, { verified: true }); resolve(data.value);
@@ -85,15 +92,3 @@ export async function browserTransaction(plan: PlannedTx, client: TestnetClient,
     verifyTransaction(tx, plan);
   }, open) as Hex;
 }
-const walletPage = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>buidl · CLI wallet</title>
-<style>body{background:#10121b;color:#eef0fa;font:16px system-ui;margin:5vh auto;max-width:760px;padding:24px}h1{font-size:36px}small{color:#bbb}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#1c2030;padding:20px;border-radius:10px}button,select{font:inherit;padding:12px 18px;margin:8px 8px 8px 0;border-radius:8px}button{background:#b4f458;border:0;cursor:pointer}#status{color:#dcf6b8}details{margin:20px 0}</style></head>
-<body><small>buidl CLI · simulated DeWEB fixtures · X Layer TESTNET 1952</small><h1 id="label">Wallet review</h1><p>The terminal controls this release. Review the request here and sign in your wallet.</p><pre id="summary"></pre><select id="wallet"></select><button id="review" disabled>Review in wallet</button><p id="status"></p><details><summary>Exact request</summary><pre id="detail"></pre></details>
-<script>
-const token=location.hash.slice(1),providers=[],select=document.querySelector('#wallet'),button=document.querySelector('#review'),status=document.querySelector('#status');
-let request,started=false;
-function add(provider,name){if(providers.some(p=>p.provider===provider))return;providers.push({provider,name});const o=document.createElement('option');o.value=providers.length-1;o.textContent=name;select.append(o);if(name===localStorage.getItem('buidl.cli.wallet'))select.value=o.value;}
-addEventListener('eip6963:announceProvider',e=>add(e.detail.provider,e.detail.info.name));dispatchEvent(new Event('eip6963:requestProvider'));setTimeout(()=>{if(!providers.length&&window.ethereum)add(window.ethereum,'Browser wallet')},300);
-async function api(path,body){const r=await fetch(path,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+token,'content-type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});const j=await r.json();if(!r.ok)throw Error(j.error);return j;}
-api('/request').then(r=>{request=r;button.disabled=false;document.querySelector('#label').textContent=r.label;document.querySelector('#detail').textContent=JSON.stringify(r,null,2);document.querySelector('#summary').textContent='Network: X Layer TESTNET (1952)\\nAccount: '+r.account+'\\n'+(r.kind==='signature'?'Gas fee: none\\nManifest: '+r.typedData.message.manifestDigest:'Destination: '+(r.plan.to||'New fixture contract')+'\\nNonce: '+r.plan.nonce+'\\nValue: 0 test OKB\\nMaximum at quoted gas price: '+(BigInt(r.plan.estimatedWei)/1000000000000000000n)+'.'+(BigInt(r.plan.estimatedWei)%1000000000000000000n).toString().padStart(18,'0')+' test OKB');if(r.complete){button.disabled=true;status.textContent='Already verified. Return to the terminal.'}}).catch(e=>status.textContent=e.message);
-button.onclick=async()=>{if(started||!request)return;button.disabled=true;try{const selected=providers[Number(select.value)],p=selected?.provider;if(selected)localStorage.setItem('buidl.cli.wallet',selected.name);if(!p)throw Error('No injected browser wallet found.');const accounts=await p.request({method:'eth_requestAccounts'});if(BigInt(await p.request({method:'eth_chainId'}))!==1952n)throw Error('Select X Layer TESTNET 1952 in your wallet. Mainnet is rejected.');if(accounts[0]?.toLowerCase()!==request.account.toLowerCase())throw Error('Select the requested wallet account.');started=true;status.textContent='Review the open wallet request.';let value;if(request.kind==='signature'){value=await p.request({method:'eth_signTypedData_v4',params:[request.account,JSON.stringify(request.typedData)]})}else{const nonce=await p.request({method:'eth_getTransactionCount',params:[request.account,'pending']});if(BigInt(nonce)!==BigInt(request.plan.nonce))throw Error('Nonce changed. Return to the terminal and prepare a fresh plan.');value=await p.request({method:'eth_sendTransaction',params:[request.transaction]})}status.textContent=request.kind==='transaction'?'Submitted '+value+'. Verifying in the terminal…':'Verifying signature…';await api('/result',{value});status.textContent='Verified. Return to the terminal.'}catch(e){status.textContent=e.message;if(!started)button.disabled=false;else status.textContent+=' Check wallet activity before restarting the CLI command.'}};
-</script></body></html>`;

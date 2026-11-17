@@ -4,7 +4,7 @@ import { createPublicClient, http, type Address } from 'viem';
 import { address, object } from '../core/manifest';
 import { assertTestnet, parseTestnetConfig, testnet, TESTNET_RPCS, type TestnetConfig } from '../core/testnet';
 import { jsonText } from './output';
-export type Project = { version: 1; network: 'xlayer-testnet-fixtures'; chainId: 1952; rpcUrl: string; owner: Address; reviewers: Address[]; threshold: number; fixtures?: TestnetConfig };
+export type Project = { version: 1; name?: string; network: 'xlayer-testnet-fixtures'; chainId: 1952; rpcUrl: string; owner: Address; reviewers: Address[]; threshold: number; fixtures?: TestnetConfig };
 export const loadJson = async (path: string): Promise<unknown> => JSON.parse(await readFile(path, 'utf8'));
 export async function saveNew(path: string, data: unknown) {
   await mkdir(dirname(resolve(path)), { recursive: true });
@@ -18,14 +18,15 @@ export function rpcUrl(value: unknown) {
   return url.toString();
 }
 export function parseProject(input: unknown): Project {
-  const p = object(input, ['version', 'network', 'chainId', 'rpcUrl', 'owner', 'reviewers', 'threshold', 'fixtures'], 'buidl project');
+  const p = object(input, ['version', 'name', 'network', 'chainId', 'rpcUrl', 'owner', 'reviewers', 'threshold', 'fixtures'], 'buidl project');
   if (p.version !== 1 || p.network !== 'xlayer-testnet-fixtures' || p.chainId !== 1952) throw new Error('This workflow requires X Layer testnet fixtures, chain 1952. Mainnet is rejected.');
+  if (p.name !== undefined && (typeof p.name !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9 _.-]{0,79}$/.test(p.name))) throw new Error('App name must be 1–80 letters, numbers, spaces, dots, underscores or hyphens.');
   const owner = address(p.owner);
   if (!Array.isArray(p.reviewers)) throw new Error('Provide separate reviewer addresses.');
   const reviewers = p.reviewers.map(address).sort();
   if (new Set(reviewers).size !== reviewers.length || reviewers.includes(owner) || reviewers.length > 31 ||
       !Number.isInteger(p.threshold) || Number(p.threshold) < 1 || Number(p.threshold) > reviewers.length) throw new Error('Invalid reviewer policy: distinct reviewers must differ from the owner and meet the threshold.');
-  return { version: 1, network: 'xlayer-testnet-fixtures', chainId: 1952, rpcUrl: rpcUrl(p.rpcUrl ?? TESTNET_RPCS[0]), owner,
+  return { version: 1, ...(p.name ? { name: p.name as string } : {}), network: 'xlayer-testnet-fixtures', chainId: 1952, rpcUrl: rpcUrl(p.rpcUrl ?? TESTNET_RPCS[0]), owner,
     reviewers, threshold: Number(p.threshold), ...(p.fixtures ? { fixtures: parseTestnetConfig(p.fixtures) } : {}) };
 }
 export async function projectAt(path = 'buidl.json', overrideRpc?: string) {
@@ -35,6 +36,6 @@ export async function projectAt(path = 'buidl.json', overrideRpc?: string) {
   return { project, client };
 }
 export function fixtures(project: Project) {
-  if (!project.fixtures) throw new Error('No fixture deployment configured. Run buidl testnet deploy first.');
+  if (!project.fixtures) throw new Error('No fixture deployment configured. Run buidl app deploy --execute first.');
   return project.fixtures;
 }

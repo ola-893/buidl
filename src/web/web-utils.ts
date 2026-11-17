@@ -15,6 +15,6 @@ export function download(name: string, value: unknown) {
 
 export async function fetchJson(path: string): Promise<unknown> {
   const response = await fetch(path, { cache: 'no-store' });
-  if (!response.ok) throw new Error('Local demo files are unavailable. Run npm run demo -- init.');
+  if (!response.ok) throw new Error('Local developer fixture files are unavailable.');
   return response.json();
 }

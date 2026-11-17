@@ -1,5 +1,7 @@
 # X Layer testnet pilot
 
+For current wallet, app and release operations, follow the [CLI guide](cli.md). This document records the fixture architecture, public pilot receipts and earlier dashboard workflow.
+
 This deployment uses the explicit `?testnet=1` dashboard route, chain **1952**, and test OKB. The live network is separate from X Layer mainnet (196). Test fixture constructors reject every chain except 1952. The wallet and CLI check the network before estimates or signatures.
 
 ## Verified discovery

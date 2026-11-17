@@ -1,96 +1,118 @@
 # buidl
 
-Does this deployed DeWEB app match the exact release approved by the team?
+Does this deployed DeWEB app still match the release its reviewers approved?
 
-buidl verifies X Layer DeWEB bytes against TapeOut and compares complete deployments with independently approved manifests. The local demo uses Anvil. The X Layer pilot uses the native TapeOut contracts and a site-specific authority, with a full rehearsal on an Anvil fork. Approval establishes an artifact match. Security reviews and source-to-build reproducibility are separate claims.
+buidl is a CLI for release manifests, reviewer signatures, gated publishing and fresh verification. Developers operate it through wallet, app, policy and release commands. The [web dashboard](https://ola-893.github.io/buidl/) and [public verification links](https://ola-893.github.io/buidl/?verify=1.2.230.tape) are companion inspection surfaces.
 
-## Use buidl
+## Install and connect
 
-The **CLI is the primary product distribution and demo surface**. Developers generate manifests, collect reviewer signatures, gate publishing and verify deployed files from the terminal. The [web dashboard](https://ola-893.github.io/buidl/) and [public verification links](https://ola-893.github.io/buidl/?verify=1.2.230.tape) provide inspection and shareable evidence.
+Use Node.js 22.13 or newer. Install the CLI from [npm](https://www.npmjs.com/package/@ola-893/buidl):
 
 ```sh
-npm install -g @ola-893/buidl@0.4.0
+npm install -g @ola-893/buidl@0.5.0
 buidl --version
-buidl demo --out ./demo-evidence
+buidl --help
+buidl wallet connect --network testnet
+buidl wallet show
 ```
 
-The one-command demo requires Foundry Anvil, runs the complete lifecycle on its own disposable local node and writes twelve checks with receipts. It sends no public network transactions. The [CLI guide](docs/cli-demo.md) covers actual testnet wallet signing, publishing, recovery and CI.
+`wallet connect` opens a local page where you choose your browser wallet, select X Layer testnet and sign a connection message. It verifies the recovered address and saves the public connection profile. No private key is imported. Every later release signature or transaction has its own wallet confirmation.
 
-The npm package is [`@ola-893/buidl`](https://www.npmjs.com/package/@ola-893/buidl); its terminal command is `buidl`. To build the same package from source, run `npm ci` and `npm pack`. The [published v0.3.0](https://github.com/ola-893/buidl/releases/tag/v0.3.0) supports the earlier X Layer pilot commands and predates this testnet CLI. Node.js 22.13+ is required.
+The write workflow currently supports **X Layer testnet, chain 1952**, using explicitly labeled buidl hosting fixtures. It rejects mainnet. Live TapeOut mainnet inspection is read-only. The complete native TapeOut workflow was also tested separately on a [mainnet fork](docs/xlayer-release.md); that is a different claim from this public testnet fixture pilot.
 
-Public links perform fresh reads when opened, recheck while open, and display the checked block and UTC check time. A live X Layer link reports content integrity and checks current approval when the site is enrolled in a recognized authority. A loopback demo link checks the actual Anvil registry and shows its reviewer evidence and match status. It is scoped to that particular local registry instance and, when available, its current release digest.
+## Register an app
 
-## Run locally
+Run commands individually. Replace the reviewer placeholders with two addresses that differ from the holder:
 
-Use Node.js 22.13+ and npm. The controlled release workflow also requires [Foundry Anvil](https://getfoundry.sh/anvil/).
+```sh
+buidl app init checkout --network testnet --reviewers 0xREVIEWER1,0xREVIEWER2
+buidl app show
+buidl app deploy
+buidl app deploy --execute
+buidl app enroll --execute
+buidl app register --execute
+buidl policy show
+buidl doctor
+```
+
+`app deploy` previews the testnet contract deployments. `--execute` opens wallet confirmations with gas estimates. Enrollment puts the fixture circuit into the authority contract's custody; the depositor can recover it with `buidl app recover --execute`. To use a deployment you already control, pass `--fixtures fixture-config.json` to `app init`.
+
+## Approve and publish a release
+
+Generate the manifest from your own build. Keep the manifest outside the build directory:
+
+```sh
+buidl release create checkout-v1 --build ./dist --out ./manifest.json
+buidl release inspect ./manifest.json
+buidl release request ./manifest.json --out ./approval-request.json
+```
+
+Each reviewer connects their own wallet and signs the same request. Reviewers can run these commands on separate machines with copies of the project and request files:
+
+```sh
+buidl wallet connect --network testnet --account 0xREVIEWER1
+buidl release sign ./approval-request.json --out ./reviewer1.json
+```
+
+```sh
+buidl wallet connect --network testnet --account 0xREVIEWER2
+buidl release sign ./approval-request.json --out ./reviewer2.json
+```
+
+The holder reconnects, records the reviewers' approval and publishes the exact build:
+
+```sh
+buidl wallet connect --network testnet --account 0xHOLDER
+buidl release approve ./reviewer1.json ./reviewer2.json
+buidl release approve ./reviewer1.json ./reviewer2.json --execute
+buidl release gate ./dist ./manifest.json
+buidl release publish ./dist ./manifest.json --execute
+buidl release verify --manifest ./manifest.json --out ./verification.json
+buidl wallet history
+```
+
+These are independent operator commands. Nothing automatically creates accounts, signs approvals, funds wallets or runs the release journey. The [CLI guide](https://github.com/ola-893/buidl/blob/v0.5.0/docs/cli.md) covers configuration and recovery. The [recording guide](https://github.com/ola-893/buidl/blob/v0.5.0/docs/cli-demo.md) gives a manual command sequence for presenting your own app.
+
+## Day-to-day operations
+
+```sh
+buidl wallet show
+buidl app status
+buidl policy show
+buidl release status
+buidl release revoke --execute
+buidl app recover --execute
+buidl wallet reconcile --hash 0xTRANSACTIONHASH
+buidl wallet disconnect
+```
+
+Writes preview their action unless `--execute` is present. `release sign` explicitly requests a reviewer signature without a gas fee. Publishing checks the staged bytes and current approval, verifies onchain files before finishing, and performs a fresh final check. An interrupted upload stays unverified. Re-run `release publish` to resume; files are skipped only when fresh hash, size and type checks match the manifest.
+
+The CLI records transaction estimates, hashes and receipts in `.buidl/transactions.json` next to the project. Uncertain submissions stop later writes until reconciled. Disconnect clears the saved CLI profile; reject any already-open request in the extension separately.
+
+`--json` and piped stdout produce structured output for CI. Successful verification exits 0; a completed check without an approved match exits 2; invalid input, failed gates and unavailable dependencies exit 1.
+
+## Read-only TapeOut inspection
+
+```sh
+buidl inspect 1.2.230.tape
+```
+
+Inspection reconstructs and hashes deployed files. It does not open the inspected app. Approval proves an artifact match; it does not establish a security audit or source-to-build reproducibility. Enforcing access to approved releases still requires integration with the viewer or gateway serving the app.
+
+## Develop and verify
 
 ```sh
 npm ci
+npm run build
+npm test
+npm run test:testnet
+npm run test:cli
 npm run dev
 ```
 
-Open [buidl](http://127.0.0.1:5173). The default site, `1.2.230.tape`, is read from X Layer mainnet. You can also enter names such as `#1@2.230` or an address scoped as `xlayer:0x…` or `xlayer:0x…#1`. The inspector renders metadata and hashes. It never opens the inspected page.
+The integration tests require Foundry Anvil and Playwright Chromium. Use `BUIDL_BROWSER=chrome npm run test:cli` to use installed Chrome. Test accounts and disposable nodes belong to the test harness, not the distributed CLI. `npm pack` builds an installable package containing the CLI and wallet page.
 
-Run the mainnet inspection in a terminal with `npm run buidl -- inspect 1.2.230.tape`. A captured result is in [live inspection evidence](docs/live-inspection.json).
+The [public fixture pilot evidence](https://github.com/ola-893/buidl/blob/v0.5.0/docs/testnet/results/cli-approved-release.json) records a real holder, two reviewer wallets, onchain approval, CLI publishing and a fresh approved match. [Custody and testnet scope](docs/testnet-pilot.md) · [Manifest and approval formats](docs/formats.md) · [Integration map](docs/integrations.md).
 
-For the testnet-only pilot, run `buidl testnet --help` and follow [the CLI guide](docs/cli-demo.md). The [separate testnet dashboard](http://127.0.0.1:5173/?testnet=1) and [custody runbook](docs/testnet-pilot.md) remain available. It uses labeled buidl fixtures on chain 1952 because the reviewed TapeOut deployment addresses have no testnet code. Every transaction has a cost review before wallet signing, and the fixture constructors reject mainnet. The testnet commands are available from this checkout; CLI v0.3.0 predates them.
-
-## Run the controlled release workflow
-
-Start a dedicated Anvil instance bound to loopback:
-
-```sh
-anvil --host 127.0.0.1 --port 8545 --chain-id 31337
-```
-
-In a second terminal:
-
-```sh
-npm run demo -- init
-npm run demo -- approve a
-npm run buidl -- gate demo/release-a public/local-demo/manifest-a.json public/local-demo/config.json
-npm run buidl -- publish-local demo/release-a public/local-demo/manifest-a.json public/local-demo/config.json
-npm run buidl -- verify-local public/local-demo/manifest-a.json public/local-demo/config.json
-```
-
-The first Anvil account publishes. Two of the next three accounts independently sign typed approval. For browser signing, open **Local demo** from the dev server and select **Releases**, then **Load demo A**. Use **Approvals** to create a request, connect the local reviewer accounts in turn, and sign. Export/import carries the request between reviewers. Once the threshold is met, any connected wallet on the local chain can record the approval. To start with an unregistered local site, use `npm run demo -- init --unregistered`, then connect the holder wallet and select **Approvals → Register app**. The scripted `approve a` command is an alternative to the browser signing steps once a policy exists. Use a disposable extension wallet profile and the test-only accounts printed by Anvil.
-
-Run `npm run demo` for the entire scripted A → bypassed B → approved B demonstration. The [2:40 demo script](docs/demo.md) gives the browser and terminal sequence.
-
-To generate a candidate from a directory, use **Releases → Select build folder**, or:
-
-```sh
-npm run buidl -- manifest demo/release-a --site public/local-demo/site.json \
-  --release checkout-a --fallback index.html --out /tmp/buidl-manifest-a.json
-```
-
-Write the manifest outside the build directory. CI should treat the CLI's nonzero exit as a failed check. `inspect` and `verify-local` exit 2 for completed checks without a complete verification or an approved match, respectively. Command, input, and gate failures exit 1.
-
-## Architecture
-
-- `src/core/tapeout.ts` uses the pinned TapeKit kernel for identity, implementation checks, and multi-operator RPC. The inventory reader hashes raw bytes and uses the exact paths and routing metadata returned by SiteRegistry.
-- `src/core/manifest.ts` and `src/core/build.ts` implement the canonical format, artifact staging, and comparison. See the [manifest and approval formats](docs/formats.md).
-- `src/core/approval.ts` and `contracts/ReleaseRegistry.sol` verify EIP-712 signatures. The registry stores commitments and policy state onchain. Manifests and file contents stay outside the approval registry.
-- `contracts/LocalDeweb.sol` is a controlled local fixture with a SiteRegistry-compatible surface and an ownership epoch. It provides explicit upload state, so a multi-transaction upload can stay visibly incomplete.
-- `src/cli.ts`, `src/publish.ts`, and `src/web` expose the CLI gate, staged publisher, and React interface. Local JSON exports and registry logs provide portable evidence and chain history.
-
-## Verification and enforcement
-
-```sh
-npm run build
-npm test
-npx playwright install chromium
-npm run test:browser
-```
-
-The browser suite expects the disposable Anvil service running. It deploys its own fixture per run. Use `BUIDL_BROWSER=chrome npm run test:browser` with installed Chrome. It reads a real mainnet deployment and signs and submits local transactions through a controlled EIP-1193 test provider. The OKX browser-extension path follows its documented EVM interface and still needs an interactive extension check.
-
-The supported publisher gates staged bytes before upload and verifies the staged deployment before ending the upload. Direct holder writes can bypass the publisher. A fresh post-deployment read detects divergence. Viewer-side blocking requires a viewer that integrates and enforces the result. For loopback recovery, rerun the gated publisher after the interrupted process exits. After a hard kill, remove the matching empty `.demo/publish-<container>.lock` directory once the old publisher is gone.
-
-The hosted frontend uses GitHub Pages as its independent HTTPS origin. The [X Layer release pilot](docs/xlayer-release.md) describes the fork rehearsal and team-signed mainnet steps. Existing public sites remain inspectable, and live approval evidence requires explicit site enrollment. The [integration map](docs/integrations.md) records the verified contracts, provider constraints, and hosting options.
-
-## Commercial use and roadmap
-
-The initial users are payment and dapp teams with publishing wallets and separate reviewers. A proposed model is free inspection and portable public evidence, with paid CI integration, team policy administration, and release notifications. TapeOut developer channels and wallet or gateway integrations are candidate distribution channels. Teams would pay for a repeatable approval gate and incident evidence across releases. Commercial deployments should retain the vendored [TapeKit MIT notice](vendor/tapekit/LICENSE). TAP text is CC0, TapeKit code is MIT, and bundled fonts carry their SIL Open Font License notices.
-
-Future work includes a curated DeWEB app store, independent reviewer attestations and revocation, contract evidence bound to chain/address/bytecode/proxy/configuration, authorized isolated AI exploit testing, private disclosures and reviewer-validated bounties, and enforcement integrations for directories, gateways, and wallets.
+The app store and AI testing remain deferred. Commercial deployments should retain the vendored [TapeKit MIT notice](vendor/tapekit/LICENSE); third-party notices are included in the CLI package.

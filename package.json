@@ -1,6 +1,6 @@
 {
   "name": "@ola-893/buidl",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "engines": {
     "node": ">=22.13"
@@ -10,7 +10,6 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "buidl": "tsx src/cli.ts",
-    "demo": "tsx scripts/demo.ts",
     "test": "tsx --test tests/*.test.ts",
     "test:browser": "playwright test",
     "prepare": "npm run build:cli",
@@ -55,6 +54,7 @@
   },
   "files": [
     "build-cli/",
+    "docs/cli.md",
     "docs/cli-demo.md"
   ],
   "description": "Release approval, gated publishing and fresh verification for DeWEB on X Layer",
@@ -62,7 +62,7 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "homepage": "https://github.com/ola-893/buidl#readme",
+  "homepage": "https://github.com/ola-893/buidl/tree/v0.5.0#readme",
   "bugs": {
     "url": "https://github.com/ola-893/buidl/issues"
   }

@@ -15,6 +15,7 @@ import { browserSignature } from './wallet';
 import { fixtures, loadJson, parseProject, projectAt, saveNew } from './project';
 import { jsonText, report } from './output';
 import { WalletSender } from './sender';
+import { connectedWallet } from './connection';
 
 const mkdirForPlan = (path: string) => mkdir(dirname(resolve(path)), { recursive: true });
 
@@ -38,9 +39,10 @@ export const testnetHelp = `buidl testnet — X Layer TESTNET 1952 · simulated 
 Options: --project buidl.json · --rpc <testnet-url> · --from <address> · --json · --no-open
 Writes require --broadcast --wallet. Every transaction gets a cost review and a wallet confirmation.
 No private keys are accepted. Mainnet is rejected. Files are written without overwriting existing evidence.`;
-export async function terminalTestnet(args: string[]) {
+export async function terminalTestnet(args: string[], operator = false) {
+  const executionFlag = operator ? '--execute' : '--broadcast --wallet';
   const { positionals, values: v } = parseArgs({ args, allowPositionals: true, options: {
-    project: { type: 'string' }, rpc: { type: 'string' }, owner: { type: 'string' }, reviewers: { type: 'string' },
+    project: { type: 'string' }, rpc: { type: 'string' }, owner: { type: 'string' }, name: { type: 'string' }, reviewers: { type: 'string' },
     threshold: { type: 'string' }, fixtures: { type: 'string' }, fixture: { type: 'string' }, from: { type: 'string' },
     out: { type: 'string' }, release: { type: 'string' }, fallback: { type: 'string' }, reviewer: { type: 'string' },
     manifest: { type: 'string' }, to: { type: 'string' }, hash: { type: 'string' },
@@ -56,19 +58,30 @@ export async function terminalTestnet(args: string[]) {
   const projectPath = resolve(v.project ?? 'buidl.json');
   if (command === 'init') {
     if (!v.owner || !v.reviewers || p.length) throw new Error(testnetHelp);
-    const project = parseProject({ version: 1, network: 'xlayer-testnet-fixtures', chainId: 1952, rpcUrl: v.rpc ?? TESTNET_RPCS[0],
+    const project = parseProject({ version: 1, ...(v.name ? { name: v.name } : {}), network: 'xlayer-testnet-fixtures', chainId: 1952, rpcUrl: v.rpc ?? TESTNET_RPCS[0],
       owner: v.owner, reviewers: v.reviewers.split(','), threshold: Number(v.threshold ?? 2), ...(v.fixtures ? { fixtures: await loadJson(v.fixtures) } : {}) });
     await saveNew(projectPath, project);
-    return report('Testnet project created', { project: projectPath, network: 'X Layer TESTNET 1952 · buidl fixtures', owner: project.owner, next: 'buidl testnet doctor' }, v.json);
+    return report('Testnet project created', { project: projectPath, network: 'X Layer TESTNET 1952 · buidl fixtures', owner: project.owner, next: operator ? 'buidl doctor' : 'buidl testnet doctor' }, v.json);
+  }
+  if (command === 'manifest') {
+    if (p.length !== 1 || !v.release || !v.out) throw new Error(testnetHelp);
+    const project = parseProject(await loadJson(projectPath));
+    const config = fixtures(project);
+    const staged = await readBuild(p[0], { site: testnetSite(config), release: v.release, fallback: v.fallback ?? 'index.html' });
+    await saveNew(v.out, staged.manifest);
+    return report('Release manifest created', { manifest: resolve(v.out), digest: manifestDigest(staged.manifest), files: staged.manifest.files.length }, v.json);
   }
   const { project, client } = await projectAt(projectPath, v.rpc);
-  const account = address(v.from ?? project.owner);
+  const connected = await connectedWallet(!!v.broadcast || command === 'sign');
+  const account = address(v.from ?? connected?.address ?? project.owner);
+  if (connected && connected.address !== account) throw new Error(`Reconnect the signing wallet with buidl wallet connect --network testnet --account ${account}`);
   const sender = new WalletSender(client, account, projectPath, !v['no-open']);
   if (command === 'reconcile') {
     if (!v.hash || !isHash(v.hash)) throw new Error('Provide --hash <wallet transaction hash>.');
     return report('Wallet result reconciled', { result: await sender.reconcile(v.hash) }, v.json);
   }
   if (command === 'deploy') {
+    if (account !== project.owner) throw new Error(`Connect the configured holder ${project.owner} before deploying this app.`);
     if (project.fixtures) throw new Error('This project already has fixtures. Run status; existing deployments will not be replaced.');
     let pending: Awaited<ReturnType<typeof planTestnet>> | undefined;
     try { pending = await loadJson(projectPath + '.deployment.json') as typeof pending; }
@@ -86,7 +99,7 @@ export async function terminalTestnet(args: string[]) {
     }
     if (!v.broadcast) {
       if (v.out) await saveNew(v.out, plan);
-      return report('Testnet fixture deployment preview', { ...plan, maximumTestOKB: formatEther(BigInt(plan.maximumAtQuotedGasPriceWei)), next: 'Repeat with --broadcast --wallet to review each deployment.' }, v.json);
+      return report('Testnet fixture deployment preview', { ...plan, maximumTestOKB: formatEther(BigInt(plan.maximumAtQuotedGasPriceWei)), next: `Repeat with ${executionFlag} to review each deployment.` }, v.json);
     }
     if (!v.wallet) throw new Error('--broadcast requires --wallet.');
     await sender.locked(async () => {
@@ -101,7 +114,7 @@ export async function terminalTestnet(args: string[]) {
       await writeFile(temp, jsonText({ ...project, fixtures: plan.config }) + '\n', { mode: 0o600 });
       await rename(temp, projectPath);
     });
-    return report('Testnet fixtures deployed', { config: plan.config, next: 'buidl testnet enroll --broadcast --wallet' }, v.json);
+    return report('Testnet fixtures deployed', { config: plan.config, next: operator ? 'buidl app enroll --execute' : 'buidl testnet enroll --broadcast --wallet' }, v.json);
   }
   if (command === 'doctor') {
     const [block, balance, nonce] = await Promise.all([client.getBlock(), client.getBalance({ address: account }), client.getTransactionCount({ address: account, blockTag: 'pending' })]);
@@ -111,12 +124,6 @@ export async function terminalTestnet(args: string[]) {
       signing: 'Browser wallet; signatures and transactions are verified independently', receipts: sender.journal }, v.json);
   }
   const config = fixtures(project);
-  if (command === 'manifest') {
-    if (p.length !== 1 || !v.release || !v.out) throw new Error(testnetHelp);
-    const staged = await readBuild(p[0], { site: testnetSite(config), release: v.release, fallback: v.fallback ?? 'index.html' });
-    await saveNew(v.out, staged.manifest);
-    return report('Release manifest created', { manifest: resolve(v.out), digest: manifestDigest(staged.manifest), files: staged.manifest.files.length }, v.json);
-  }
   const state = await testnetSnapshot(config, client);
   if (['status', 'verify'].includes(command)) {
     const manifest = v.manifest ? parseManifest(await loadJson(v.manifest)) : undefined;
@@ -143,8 +150,10 @@ export async function terminalTestnet(args: string[]) {
     if (p.length !== 1 || !v.reviewer || !v.out || !v.wallet) throw new Error(testnetHelp);
     const request = parseEvidence(await loadJson(p[0])); assertTestnetRequest(request, config, state);
     const reviewer = address(v.reviewer);
+    await connectedWallet(true, reviewer);
     if (!state.approval!.policy.reviewers.some(r => r.toLowerCase() === reviewer) || reviewer === state.approval!.policy.holder.toLowerCase()) throw new Error('Reviewer is not authorized by the current policy.');
-    await signaturesFor(request, state.approval!.policy, false);
+    const existing = await signaturesFor(request, state.approval!.policy, false);
+    if (existing.some(([signer]) => signer === reviewer)) throw new Error('This reviewer already signed the request.');
     const signature = await browserSignature(request, reviewer, client, !v['no-open']);
     const signed = { ...request, signatures: [...request.signatures, signature] };
     const verified = await signaturesFor(signed, state.approval!.policy, false);
@@ -173,13 +182,14 @@ export async function terminalTestnet(args: string[]) {
     if (account !== state.governor.toLowerCase()) throw new Error('Publishing requires the enrolled circuit governor.');
     action = () => publishTestnet(config, staged, sender.send, client, { resume: true });
     if (!v.broadcast) return report('Approved publishing ready', { digest: manifestDigest(manifest), files: manifest.files.length, resumeAttempt: state.inProgress ? state.attempt : undefined,
-      next: 'Repeat with --broadcast --wallet. Each remaining transaction is estimated before its wallet review.' }, v.json);
+      next: `Repeat with ${executionFlag}. Each remaining transaction is estimated before its wallet review.` }, v.json);
   } else if (command === 'enroll') {
     if (state.inspection.holder?.toLowerCase() !== account) throw new Error('Enrollment requires the current circuit holder.');
     txs.push({ to: config.fixture, label: 'Enroll simulated circuit into test custody', data: encodeFunctionData({ abi: fixtureAbi, functionName: 'safeTransferFrom',
       args: [account, config.authority, 1n, state.registry === zeroAddress ? toHex(randomBytes(32)) : '0x'] }) });
   } else if (command === 'policy') {
-    txs.push({ to: state.registry, label: 'Register separate reviewer policy', data: encodeFunctionData({ abi: registryAbi, functionName: 'setPolicy', args: [siteTuple(testnetSite(config)), project.reviewers, BigInt(project.threshold)] }) });
+    const policy = parseProject({ ...project, owner: state.governor, reviewers: v.reviewers ? v.reviewers.split(',') : project.reviewers, threshold: v.threshold ? Number(v.threshold) : project.threshold });
+    txs.push({ to: state.registry, label: 'Register separate reviewer policy', data: encodeFunctionData({ abi: registryAbi, functionName: 'setPolicy', args: [siteTuple(testnetSite(config)), policy.reviewers, BigInt(policy.threshold)] }) });
   } else if (command === 'interrupt') {
     if (!state.approval?.commitment.approval.sequence) throw new Error('No release approval to interrupt.');
     txs.push({ ...beginTestnet(config, state), label: 'Begin interrupted testnet publication' });
@@ -197,7 +207,7 @@ export async function terminalTestnet(args: string[]) {
       await sender.send({ ...testnetWrite(config, attempt, encodeFunctionData({ abi: storeAbi, functionName: 'putFile', args: [config.fixture, payment.path, payment.type, payment.sha256, toHex(staged.contents.get(payment.path)!)] })), label: 'Write changed payment bytes with valid SHA-256' });
       await sender.send({ to: config.authority, data: encodeFunctionData({ abi: testnetAuthorityAbi, functionName: 'finishPublication', args: [attempt] }), label: 'Finish controlled fixture mutation' });
     };
-    if (!v.broadcast) return report('Controlled fixture mutation preview', { path: payment.path, sha256: payment.sha256, expected: 'Valid file hash, but differs from the approved release', next: 'Add --broadcast --wallet to sign each testnet transaction.' }, v.json);
+    if (!v.broadcast) return report('Controlled fixture mutation preview', { path: payment.path, sha256: payment.sha256, expected: 'Valid file hash, but differs from the approved release', next: `Add ${executionFlag} to sign each testnet transaction.` }, v.json);
   } else if (command === 'revoke') {
     txs.push({ to: state.registry, label: 'Revoke current release approval', data: encodeFunctionData({ abi: registryAbi, functionName: 'revoke', args: [siteTuple(testnetSite(config)), state.approval!.commitment.approval.sequence] }) });
   } else if (command === 'recover') {
@@ -208,10 +218,15 @@ export async function terminalTestnet(args: string[]) {
   }
   if (!v.broadcast) {
     const plans = []; for (const tx of txs) plans.push(await sender.quote(tx));
-    return report('Unsigned testnet transaction preview', { plans, next: 'Repeat with --broadcast --wallet to review and sign.' }, v.json);
+    return report('Unsigned testnet transaction preview', { plans, next: `Repeat with ${executionFlag} to review and sign.` }, v.json);
   }
   if (!v.wallet) throw new Error('--broadcast requires --wallet.');
   await sender.locked(async () => { if (action) await action(); else for (const tx of txs) await sender.send(tx); });
+  if (command === 'policy') {
+    const updated = parseProject({ ...project, owner: account, reviewers: v.reviewers ? v.reviewers.split(',') : project.reviewers, threshold: v.threshold ? Number(v.threshold) : project.threshold });
+    await writeFile(projectPath + '.tmp', jsonText(updated) + '\n', { mode: 0o600 });
+    await rename(projectPath + '.tmp', projectPath);
+  }
   const final = await testnetSnapshot(config, client);
   report('Testnet operation confirmed', { operation: command, outcome: outcomes[testnetOutcome(final)], block: final.inspection.block, receipts: sender.journal }, v.json);
 }

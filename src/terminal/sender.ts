@@ -2,9 +2,10 @@ import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { formatEther, type Address, type Hex } from 'viem';
 import { assertTestnet, estimateTestnet, type PlannedTx, type TestnetClient } from '../core/testnet';
-import { browserTransaction, verifyTransaction } from './wallet';
+import { browserTransaction, verifyTransaction, WalletRejected } from './wallet';
 import { jsonText } from './output';
-export type JournalEntry = { plan: PlannedTx; status: 'wallet-requested' | 'submitted' | 'success' | 'reverted'; hash?: Hex; receipt?: unknown; paidWei?: string; checkedAt?: string };
+import { connectedWallet } from './connection';
+export type JournalEntry = { plan: PlannedTx; status: 'wallet-requested' | 'submitted' | 'success' | 'reverted' | 'cancelled'; hash?: Hex; receipt?: unknown; paidWei?: string; checkedAt?: string };
 export class WalletSender {
   readonly root: string;
   readonly journal: string;
@@ -25,7 +26,7 @@ export class WalletSender {
     const lock = join(this.root, 'transaction.lock');
     try { await mkdir(lock); } catch { throw new Error(`Another CLI operation holds ${lock}. After a hard kill, inspect wallet activity and reconcile transactions before removing the stale lock.`); }
     try {
-      if ((await this.entries()).some(e => !['success', 'reverted'].includes(e.status))) throw new Error('A wallet request has an uncertain outcome. Run buidl testnet reconcile --hash <wallet-transaction-hash> before another write.');
+      if ((await this.entries()).some(e => !['success', 'reverted', 'cancelled'].includes(e.status))) throw new Error('A wallet request has an uncertain outcome. Run buidl wallet reconcile --hash <wallet-transaction-hash> before another write.');
       return await run();
     } finally { await rm(lock, { recursive: true }); }
   }
@@ -36,14 +37,19 @@ export class WalletSender {
     return { ...estimate, label: tx.label, nonce };
   }
   send = async (tx: { to?: Address; data: Hex; label: string; nonce?: number }) => {
+    await connectedWallet(true, this.account);
     const plan = await this.quote(tx);
     console.error(`\n${plan.label}\n  X Layer TESTNET 1952 · nonce ${plan.nonce}\n  Maximum gas at quote: ${formatEther(BigInt(plan.estimatedWei))} test OKB\n  Value: 0 test OKB\n`);
     await assertTestnet(this.client);
     const entries = await this.entries();
     const entry: JournalEntry = { plan, status: 'wallet-requested' }; entries.push(entry); await this.save(entries);
-    const hash = await browserTransaction(plan, this.client, this.open, async hash => {
+    let hash: Hex;
+    try { hash = await browserTransaction(plan, this.client, this.open, async hash => {
       entry.hash = hash; entry.status = 'submitted'; await this.save(entries); console.error(`  Submitted ${hash}`);
-    });
+    }); } catch (error) {
+      if (error instanceof WalletRejected && entry.status === 'wallet-requested') entry.status = 'cancelled';
+      await this.save(entries); throw error;
+    }
     try { await this.confirm(entry, hash); } finally { await this.save(entries); }
   };
   async confirm(entry: JournalEntry, hash: Hex) {
@@ -57,7 +63,7 @@ export class WalletSender {
   }
   async reconcile(hash: Hex) {
     const entries = await this.entries();
-    const entry = entries.findLast(e => !['success', 'reverted'].includes(e.status));
+    const entry = entries.findLast(e => !['success', 'reverted', 'cancelled'].includes(e.status));
     if (!entry) throw new Error('No uncertain CLI wallet request to reconcile.');
     try { await this.confirm(entry, hash); } finally { await this.save(entries); }
     return entry;
