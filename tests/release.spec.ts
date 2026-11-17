@@ -8,6 +8,7 @@ import { parseManifest } from '../src/core/manifest';
 import { EXAMPLE_SITE } from '../src/core/tapeout';
 import { localWallet, waitFor } from '../src/publish';
 
+const prepareLocalFixture = (...args: string[]) => execFileSync(process.execPath, ['--import', 'tsx', 'scripts/demo.ts', ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 const cli = (...args: string[]) => execFileSync('npm', ['run', '--silent', ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 const configPath = 'public/local-demo/config.json';
 const aPath = 'public/local-demo/manifest-a.json';
@@ -47,7 +48,7 @@ test('inspect a real X Layer deployment through the browser', async ({ page }) =
 });
 
 test('approve A, publish the exact bytes, detect B, approve B and invalidate stale commitments', async ({ page }) => {
-  cli('demo', '--', 'init', '--unregistered');
+  prepareLocalFixture('init', '--unregistered');
   const config = parseLocalConfig(json(configPath));
   const client = localClient();
   const [holder, reviewer1, reviewer2, , stranger] = await localWallet(config.site.container).getAddresses();
@@ -134,7 +135,7 @@ test('approve A, publish the exact bytes, detect B, approve B and invalidate sta
   await expect(publicPage.getByText('Reviewer', { exact: true })).toHaveCount(2);
   await expect(publicPage.getByText('Checked block')).toBeVisible();
   await expect(publicPage.locator('time').first()).toHaveAttribute('datetime', /^\d{4}-/);
-  cli('demo', '--', 'bypass-b');
+  prepareLocalFixture('bypass-b');
   await publicPage.getByRole('button', { name: 'Recheck now' }).click();
   await expect(publicPage.getByRole('heading', { name: 'Deployment differs from approved release.' })).toBeVisible();
   await inspect('Deployment differs from approved release.');
@@ -150,7 +151,7 @@ test('approve A, publish the exact bytes, detect B, approve B and invalidate sta
     expect(error).toMatchObject({ status: 2, stdout: expect.stringMatching(/Deployment differs/) });
   }
 
-  cli('demo', '--', 'approve', 'b');
+  prepareLocalFixture('approve', 'b');
   await publicPage.getByRole('button', { name: 'Recheck now' }).click();
   await expect(publicPage.getByRole('heading', { name: 'No qualifying approval.' })).toBeVisible();
   await expect(publicPage.getByText('This release is no longer the registry’s current commitment.')).toBeVisible();

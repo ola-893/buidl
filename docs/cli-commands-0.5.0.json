@@ -1,0 +1,508 @@
+{
+  "kind": "individual-cli-command-integration",
+  "network": "Disposable local Anvil, chain 1952",
+  "actualUserWallets": false,
+  "actions": [
+    {
+      "command": [
+        "wallet",
+        "show"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "doctor"
+      ],
+      "exitCode": 2,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "wallet",
+        "connect",
+        "--network",
+        "testnet",
+        "--rpc",
+        "http://127.0.0.1:8551"
+      ],
+      "exitCode": 1,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "wallet",
+        "show"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "wallet",
+        "connect",
+        "--network",
+        "testnet",
+        "--account",
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "--rpc",
+        "http://127.0.0.1:8551"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "doctor"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "wallet",
+        "show"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "app",
+        "init",
+        "checkout",
+        "--network",
+        "testnet",
+        "--reviewers",
+        "0x70997970c51812dc3a010c7d01b50e0d17dc79c8,0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "app",
+        "show"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "app",
+        "deploy"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "app",
+        "deploy",
+        "--execute"
+      ],
+      "exitCode": 1,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "app",
+        "deploy",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 2
+    },
+    {
+      "command": [
+        "app",
+        "enroll",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "app",
+        "register",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "policy",
+        "show"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "create",
+        "checkout-a",
+        "--build",
+        "/Users/deonorla/Documents/seyi/demo/release-a",
+        "--out",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/a.json"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "inspect",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/a.json"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "gate",
+        "/Users/deonorla/Documents/seyi/demo/release-a",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/a.json"
+      ],
+      "exitCode": 1,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "request",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/a.json",
+        "--out",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/request.json"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "sign",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/request.json",
+        "--out",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/r1.json"
+      ],
+      "exitCode": 1,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "wallet",
+        "connect",
+        "--network",
+        "testnet",
+        "--account",
+        "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+        "--rpc",
+        "http://127.0.0.1:8551"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "release",
+        "sign",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/request.json",
+        "--out",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/r1.json"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "wallet",
+        "connect",
+        "--network",
+        "testnet",
+        "--account",
+        "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+        "--rpc",
+        "http://127.0.0.1:8551"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "release",
+        "sign",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/request.json",
+        "--out",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/r2.json"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "wallet",
+        "connect",
+        "--network",
+        "testnet",
+        "--account",
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "--rpc",
+        "http://127.0.0.1:8551"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "release",
+        "approve",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/r1.json",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/r2.json"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "approve",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/r1.json",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/r2.json",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "release",
+        "gate",
+        "/Users/deonorla/Documents/seyi/demo/release-a",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/a.json"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "gate",
+        "/Users/deonorla/Documents/seyi/demo/release-b",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/a.json"
+      ],
+      "exitCode": 1,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "publish",
+        "/Users/deonorla/Documents/seyi/demo/release-a",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/a.json",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 5
+    },
+    {
+      "command": [
+        "release",
+        "verify",
+        "--manifest",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/a.json"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "wallet",
+        "history"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "revoke",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "release",
+        "verify"
+      ],
+      "exitCode": 2,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "app",
+        "recover",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "app",
+        "transfer",
+        "--to",
+        "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "wallet",
+        "connect",
+        "--network",
+        "testnet",
+        "--account",
+        "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
+        "--rpc",
+        "http://127.0.0.1:8551"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "app",
+        "enroll",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "release",
+        "status"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "verify"
+      ],
+      "exitCode": 2,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "policy",
+        "set",
+        "--reviewers",
+        "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266,0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+        "--threshold",
+        "2",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "policy",
+        "show"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "approve",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/r1.json",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/r2.json",
+        "--execute"
+      ],
+      "exitCode": 1,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "app",
+        "recover",
+        "--execute"
+      ],
+      "exitCode": 0,
+      "walletRequests": 1
+    },
+    {
+      "command": [
+        "wallet",
+        "disconnect"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "wallet",
+        "show"
+      ],
+      "exitCode": 0,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "app",
+        "enroll",
+        "--execute"
+      ],
+      "exitCode": 1,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "wallet",
+        "connect",
+        "--network",
+        "testnet",
+        "--rpc",
+        "http://127.0.0.1:8551"
+      ],
+      "exitCode": 1,
+      "walletRequests": 0
+    },
+    {
+      "command": [
+        "release",
+        "publish",
+        "/Users/deonorla/Documents/seyi/demo/release-a",
+        "/var/folders/g3/hx44bnwd12l172nynk0xb5y00000gn/T/buidl-operational-cli-i8LdqT/a.json",
+        "--execute"
+      ],
+      "exitCode": 1,
+      "walletRequests": 0
+    }
+  ],
+  "confirmedTransactions": 16,
+  "passed": true,
+  "version": "0.5.0",
+  "sourceCommit": "0432a09",
+  "testedArtifact": {
+    "name": "@ola-893/buidl",
+    "version": "0.5.0",
+    "integrity": "sha512-G8gAjcRS0llLEw7XXbDHyRv2QjxyRHHDmfPYDS3A6y4UVuIXPv1J1D2VDL59rf79wII75WCRLIWDYZuIXm+ZIA=="
+  },
+  "demoCommandRemoved": true,
+  "privateKeysImported": false
+}
